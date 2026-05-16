@@ -1,0 +1,125 @@
+' Módulo: mod_ChecaVinculo
+' Tipo:   Módulo Padrão
+' Linhas: 121
+' ────────────────────────────────────────────────────────────
+
+
+Option Compare Database
+Option Explicit
+Public CaminhoAtual     As String
+Public booNovaChecagem  As Boolean
+Public booOk            As Boolean
+Public booSair          As Boolean
+
+
+Public Function fncChecaVinculo() As Boolean
+Dim PathBe    As String
+Dim NomeBE    As String
+Dim Contador  As Byte
+Dim box       As String
+
+On Error GoTo trataerro
+
+'------------------------------------------------------
+'Passa o caminho e o nome do back-end para as variáveis
+'------------------------------------------------------
+PathBe = Nz(DLookup("path_0", "tblCaminhoBe"), "vazio")
+NomeBE = Nz(DLookup("NomeBe", "tblCaminhoBe"), "vazio")
+
+'-----------------------------------------------------------------
+'Verifica se o nome do back-end se encontra na tabela tblcaminhoBe
+'-----------------------------------------------------------------
+If NomeBE = "vazio" Then
+    MsgBox "Entre com o nome do back-end no campo NomeBE da tabela tblCaminhoBe...", vbCritical, "Aviso"
+    fncChecaVinculo = True
+    Exit Function
+End If
+
+'---------------------------------------------------------------------------
+'Verifica se o caminho atual do back-end esta gravado na tabela tblCaminhoBe
+'---------------------------------------------------------------------------
+If PathBe = "vazio" Then
+    CurrentDb.Execute "UPDATE tblCaminhoBe SET path_0 ='" & CurrentProject.Path & "\" & NomeBE & "'"
+    PathBe = CurrentProject.Path & "\" & NomeBE
+End If
+
+'-------------------------------------------------------------------------------------
+'Passa o caminho do back-end, que está gravado no vínculo das tabelas, para a variável
+'-------------------------------------------------------------------------------------
+CaminhoAtual = fncBackEndAtual
+
+'-----------------------------------------------
+'Verifica se o back-end existe no local indicado
+'-----------------------------------------------
+If Len(Dir(PathBe) & "") > 0 Then
+    '----------------------------------------------------
+    'Verifica se o local atual do back-end corresponde
+    'ao local gravado no vínculo.  caso não corresponda,
+    'abre a barra de progresso para refazer os vinculos
+    '----------------------------------------------------
+    If CaminhoAtual <> PathBe Then
+        CaminhoAtual = PathBe
+        DoCmd.OpenForm "frmBarraProgresso", OpenArgs:=1
+    Else
+        If Len(Trim(DLookup("formPrincipal", "tblCaminhoBe")) & "") > 0 Then
+            DoCmd.OpenForm DLookup("formPrincipal", "tblCaminhoBe")
+        End If
+    End If
+Else
+    '----------------------------------------------------------------
+    'Abre o formulário para indicar a nova localização do back-end
+    '----------------------------------------------------------------
+    DoCmd.OpenForm "frmCaminhoBe", , , , , acDialog, 1
+    If booSair = True Then
+        fncChecaVinculo = True
+        Exit Function
+    End If
+    If booNovaChecagem Then fncChecaVinculo
+End If
+
+sair:
+    Exit Function
+trataerro:
+    Select Case Err.Number
+        Case 76, 52
+            DoCmd.OpenForm "frmCaminhoBe", , , , , acDialog, 1
+        Case 2102
+            MsgBox "O formulário principal '" & DLookup("formPrincipal", "tblCaminhoBe") & "' não existe...", vbInformation, "Aviso"
+            fncChecaVinculo = True
+        Case Else
+            MsgBox "Erro: " & Err.Number & vbCrLf & Err.Description, vbCritical, "Aviso", Err.HelpFile, Err.HelpContext
+            fncChecaVinculo = True
+        End Select
+End Function
+
+Private Function fncBackEndAtual() As String
+Dim strCon As String
+Dim strTabelaLink As String
+Dim tbl As DAO.TableDef
+
+On Error GoTo trataerro
+
+'-----------------------------------------------
+'capturando o nome da última tabela vinculada
+'-----------------------------------------------
+For Each tbl In CurrentDb.TableDefs
+    If Len(tbl.Connect & "") > 0 Then strTabelaLink = tbl.Name
+Next
+'-----------------------------------------------------
+'Passando o caminho do vínculo para a variável
+'-----------------------------------------------------
+strCon = CurrentDb.TableDefs(strTabelaLink).Connect
+'-----------------------------------------------------
+'Agora vou retirar apenas o caminho do accdb,
+'sem o ";DATABASE=" que o precede na string Connect.
+'-----------------------------------------------------
+
+fncBackEndAtual = Right$(strCon, (Len(strCon) - (InStr(1, strCon, ";DATABASE=", 2) + 9)))
+
+sair:
+    Exit Function
+trataerro:
+    MsgBox "Erro: " & Err.Number & vbCrLf & Err.Description, vbCritical, "Aviso", Err.HelpFile, Err.HelpContext
+    Resume sair:
+End Function
+

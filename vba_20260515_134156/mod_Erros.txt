@@ -1,0 +1,219 @@
+' Módulo: mod_Erros
+' Tipo:   Módulo Padrão
+' Linhas: 215
+' ────────────────────────────────────────────────────────────
+
+
+Option Compare Database
+Option Explicit
+
+Public Enum FunctionOutcome
+    Failure = 0
+    Success = 1
+End Enum
+
+'Constantes globais que retornam valores fixos para variáveis
+
+Global Const constTitulo = "Mensagem do sistema"
+Global Const constAviso = "Desculpe a interrupção!" & vbCrLf _
+                          & vbCrLf _
+                          & "Por favor, passe estas informações ao programador:" & vbCrLf _
+                          & vbCrLf
+Global Const constTipoObjeto = "Objeto:  "
+Global Const constNomeControle = "Controle:  "
+Global Const constErroNumero = "Número:  "
+Global Const constErroNome = "Mensagem:  "
+Global Const constOkay = "Clique em OK ou tecle Enter para continuar." & vbCrLf _
+                          & vbCrLf _
+                          & "Bom trabalho!"
+
+''de Norberto Rost
+Public Function ExplicaErro() As String
+Dim NomeObjeto, TipoObjeto, NomeControle, NumeroErro, NomeErro As String
+
+NomeControle = "Indeterminado"
+'NomeControle = Screen.ActiveControl.Name  'dá uns pau... fiquei de ver...
+NumeroErro = Err.Number
+NomeErro = Err.Description
+NomeObjeto = Application.CurrentObjectName
+    If Application.CurrentObjectType = acForm Then
+          TipoObjeto = "Formulário "
+ElseIf Application.CurrentObjectType = acReport Then
+          TipoObjeto = "Relatório "
+  Else
+          TipoObjeto = "Padrão "
+End If
+
+ExplicaErro = MsgBox(constAviso & vbCrLf _
+              & constTipoObjeto & TipoObjeto & NomeObjeto & vbCrLf _
+              & constNomeControle & NomeControle & vbCrLf _
+              & constErroNumero & NumeroErro & vbCrLf _
+              & constErroNome & NomeErro & vbCrLf _
+              & vbCrLf _
+              & constOkay & vbCrLf _
+              & Now, vbOKOnly, constTitulo)
+End Function
+
+''sem uso
+
+''   Code written by:    pootle_flump
+''   Code produced on:   2006_08_03
+''   Summary:            Example of recording Access error messages to a local text file.
+''
+''   Requirements:       This file is produced in Access XP and includes references to the Access XP library.
+''                       If you are using a version of Office prior to this then change the references.
+''
+''                       The original file is available here: http://www.dbforums.com/showthread.php?t=1605962
+''                       Please let me know if you have any problems or comments - please either create a new
+''                       thread or PM me. Please do not post on the thread linked above.
+''
+''                       I hope that you find something in this sample useful :-)
+''
+''   To run:             Copy and paste RaiseTheError into the Imediate Window (CTRL + G) and press Enter.
+''                       Check the directory you copied this db into and there should now be an error_log.log file.
+''
+''   Disclaimer:         All code is provided "as is" with no warranties or guarantees. You chose to run this code at
+''                       your own risk.
+
+''########################### BEGIN Writing errors to error log ###########################
+''Public function to write the error to the log. Returns 1 if successful
+Public Function fWriteErrorLog(ProcName As String, ModName As String, Optional BespokeErrorDesc As String) As FunctionOutcome
+'by:    pootle_flump
+
+    Dim I As Integer
+    Dim ErrNo As Long
+    Dim ErrDesc As String
+    Dim ErrSource As String
+ 
+    ErrNo = Err.Number
+    ErrDesc = Err.Description
+    ErrSource = Err.Source
+ 
+On Error GoTo fWriteErrorLog_Error
+'fGetNextLogNo - private function that returns the next sequential log number
+    I = fGetNextLogNo
+
+'Check that the fGetNextLogNo did not error
+    If Not I = -1 Then
+'Open the error log for adding an error record. fGetLogPath is a private function returning
+'the error log file path
+        Open fGetLogPath For Append Shared As #1
+'The error details and procedure\ module names and bespoke error description are added
+        Write #1, I, Now(), ErrNo, ErrDesc, ErrSource, ProcName, ModName, BespokeErrorDesc
+'File is closed
+        Close #1
+'Success returned
+        fWriteErrorLog = Success
+'... it errored
+    Else
+'Return failure
+        fWriteErrorLog = Failure
+    End If
+    
+'Clean up
+    Err.Clear
+    Exit Function
+ 
+fWriteErrorLog_Error:
+ 
+'Return failure. Nothing more returned regarding errors as nothing more can be done.
+    fWriteErrorLog = Failure
+    Err.Clear
+ 
+End Function
+ 
+'fGetNextLogNo - private function that returns the next sequential log number
+Private Function fGetNextLogNo() As Integer
+On Error GoTo fGetNextLogNo_Error
+ 
+    Dim I As Integer
+    Dim strField As String
+    Dim datField As Date
+    Dim lngErrNo As Long
+ 
+'Open the log file for reading.fGetLogPath is a private function returning the error log file path
+    Open fGetLogPath For Input Shared As #1
+ 
+'Loop through the entries to the end
+    Do While Not EOF(1)
+ 
+'Attribute the sequential log number to i. All other variables are there just to hold the read values
+        Input #1, I, strField, lngErrNo, strField, strField, strField, strField, strField
+ 
+    Loop
+ 
+'Once the loop has completed, i = the last log number. So, the return is i+1
+    fGetNextLogNo = I + 1
+ 
+'Clean up
+    Close #1
+ 
+    Exit Function
+ 
+fGetNextLogNo_Error:
+
+'File not found - the calling proc will create the file - the first record number should therefore be 1
+    If Err.Number = 53 Then
+        
+        fGetNextLogNo = 1
+    
+    Else 'the error is unhandled - make the number return -1 (error) & clean up
+        
+        fGetNextLogNo = -1
+ 
+    End If
+    
+    Close #1
+ 
+End Function
+ 
+'fGetLogPath is a private function returning the error log file path
+Private Function fGetLogPath() As String
+ 
+'Derive the log path from the data path
+    fGetLogPath = Mid(Application.CurrentDb.Name, 1, InStrRev(Application.CurrentDb.Name, "\")) & "error_log.log"
+ 
+End Function
+'########################### END Writing errors to error log ###########################
+
+'Esta é a função chamada no tratamento de erros
+Sub RaiseTheError()
+On Error GoTo RaiseTheError_Error
+    
+'Simulate an error
+    Err.Raise 9999, "Error_Raising_DB", "An unlikely but devestating error"
+    
+RaiseTheError_Exit:
+    
+    Exit Sub
+    
+RaiseTheError_Error:
+
+'Attempt to handle error... but we can't
+    If 1 = 0 Then
+    
+    Else
+        
+        Dim TheErr As String
+        
+        TheErr = Err.Description
+        
+'So we call the error logging function.
+        If fWriteErrorLog("RaiseTheError", "ErrorRaising") = Success Then
+                
+            MsgBox "There has been an unhandled error: " & vbCrLf & vbCrLf & TheErr, vbInformation, "Unhandled Error"
+            
+        Else
+            
+            MsgBox "There has been an unhandled error: " & vbCrLf & vbCrLf & TheErr & vbCrLf & vbCrLf & _
+            "THIS ERROR COULD NOT BE LOGGED PLEASE MAKE A " & vbCrLf & _
+            " NOTE OF WHAT OCCURED PRIOR TO THE ERROR " & vbCrLf & _
+            " AND CONTACT pootle_flump WITH THE DETAILS", vbInformation + vbCritical, "Unhandled Error"
+            
+        End If
+    
+    End If
+        
+    Resume RaiseTheError_Exit
+    
+End Sub

@@ -1,0 +1,27 @@
+' Módulo: mod_mes
+' Tipo:   Módulo Padrão
+' Linhas: 22
+' ────────────────────────────────────────────────────────────
+
+
+Option Compare Database
+
+Public Function FimMes(Data As Variant) As Date
+    Dim xmes, xano, xdia As String
+    
+    xmes = Month(Data) + 1
+    xano = Year(Data)
+    If xmes = 13 Then xmes = 1: xano = xano + 1
+    xdia = CDate("01/" & Str(xmes) & Str(xano))
+    FimMes = DateAdd("d", -1, xdia)
+End Function
+
+Public Function IniMes(Data As Variant) As Date
+    Dim xmes, xano, xdia As String
+    
+    xmes = Month(Data)
+    xano = Year(Data)
+    If xmes = 13 Then xmes = 1: xano = xano + 1
+    xdia = CDate("01/" & Str(xmes) & Str(xano))
+    IniMes = xdia
+End Function

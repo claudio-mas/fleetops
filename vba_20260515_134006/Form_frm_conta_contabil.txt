@@ -1,0 +1,302 @@
+' Módulo: Form_frm_conta_contabil
+' Tipo:   Documento
+' Linhas: 298
+' ────────────────────────────────────────────────────────────
+
+
+
+Option Compare Database
+
+Private Sub b_atua_localiz_Click()
+
+Me.Refresh
+
+End Sub
+
+
+
+Private Sub b_cancelar_Click()
+On Error GoTo Err_b_cancelar_Click
+
+b_primeiro.Enabled = True
+b_anterior.Enabled = True
+b_proximo.Enabled = True
+b_ultimo.Enabled = True
+b_novo.Enabled = True
+b_editar.Enabled = True
+b_excluir.Enabled = True
+b_salvar.Enabled = True
+b_imprimir.Enabled = True
+b_fechar.Enabled = True
+
+localiza.Enabled = True
+localiza1.Enabled = True
+b_atua_localiz.Enabled = True
+
+    DoCmd.RunCommand acCmdUndo
+
+Exit_b_cancelar_Click:
+    Exit Sub
+
+Err_b_cancelar_Click:
+    MsgBox Err.Description
+    Resume Exit_b_cancelar_Click
+
+End Sub
+
+Private Sub b_editar_Click()
+
+'Ao clicar no botão editar bloqueia os botões abaixo:
+
+b_primeiro.Enabled = False
+b_anterior.Enabled = False
+b_proximo.Enabled = False
+b_ultimo.Enabled = False
+b_novo.Enabled = False
+'b_editar.Enabled = False
+b_excluir.Enabled = False
+'b_salvar.Enabled = False
+b_imprimir.Enabled = False
+b_fechar.Enabled = False
+
+localiza.Enabled = False
+localiza1.Enabled = False
+b_atua_localiz.Enabled = False
+
+'Ao clicar no botão editar libera os campo abaixo para edição:
+cod_conta_contabil.Enabled = True
+descricao_conta_contabil.Enabled = True
+grupo_conta_contabil.Enabled = True
+obs_conta_contabil.Enabled = True
+
+
+
+End Sub
+
+Private Sub b_imprimir_Click()
+
+'
+
+End Sub
+
+Private Sub b_primeiro_Click()
+On Error GoTo Err_b_primeiro_Click
+
+
+    DoCmd.GoToRecord , , acFirst
+
+Exit_b_primeiro_Click:
+    Exit Sub
+
+Err_b_primeiro_Click:
+    MsgBox Err.Description
+    Resume Exit_b_primeiro_Click
+    
+End Sub
+Private Sub b_anterior_Click()
+On Error GoTo Err_b_anterior_Click
+
+
+    DoCmd.GoToRecord , , acPrevious
+
+Exit_b_anterior_Click:
+    Exit Sub
+
+Err_b_anterior_Click:
+    MsgBox Err.Description
+    Resume Exit_b_anterior_Click
+    
+End Sub
+Private Sub b_proximo_Click()
+On Error GoTo Err_b_proximo_Click
+
+
+    DoCmd.GoToRecord , , acNext
+
+Exit_b_proximo_Click:
+    Exit Sub
+
+Err_b_proximo_Click:
+    MsgBox Err.Description
+    Resume Exit_b_proximo_Click
+    
+End Sub
+Private Sub b_ultimo_Click()
+On Error GoTo Err_b_ultimo_Click
+
+
+    DoCmd.GoToRecord , , acLast
+
+Exit_b_ultimo_Click:
+    Exit Sub
+
+Err_b_ultimo_Click:
+    MsgBox Err.Description
+    Resume Exit_b_ultimo_Click
+    
+End Sub
+Private Sub b_novo_Click()
+On Error GoTo Err_b_novo_Click
+
+'Ao clicar no botão novo bloqueia os botões abaixo:
+
+b_primeiro.Enabled = False
+b_anterior.Enabled = False
+b_proximo.Enabled = False
+b_ultimo.Enabled = False
+'b_novo.Enabled = False
+b_editar.Enabled = False
+b_excluir.Enabled = False
+'b_salvar.Enabled = False
+b_imprimir.Enabled = False
+b_fechar.Enabled = False
+
+localiza.Enabled = False
+localiza1.Enabled = False
+b_atua_localiz.Enabled = False
+
+'Ao clicar no botão novo libera os campo abaixo para edição:
+cod_conta_contabil.Enabled = True
+descricao_conta_contabil.Enabled = True
+grupo_conta_contabil.Enabled = True
+obs_conta_contabil.Enabled = True
+
+
+
+    DoCmd.GoToRecord , , acNewRec
+    'MsgBox ("Na versão de demonstração não é possivel adicionar novos registros"), vbCritical, "ERD Sistemas..."
+    
+
+Exit_b_novo_Click:
+    Exit Sub
+
+Err_b_novo_Click:
+    MsgBox Err.Description
+    Resume Exit_b_novo_Click
+    
+End Sub
+
+Private Sub b_excluir_Click()
+Dim A
+A = descricao_conta_contabil.Value
+
+B = MsgBox(("A T E N Ç Ã O ! ! !, Deseja realmente excluir o registro : " & A), vbYesNo, "ERD Sistemas...")
+        
+    Select Case B
+    Case Is = vbYes
+
+On Error GoTo Err_b_excluir_Click
+
+
+    DoCmd.RunCommand acCmdSelectRecord
+    DoCmd.RunCommand acCmdDeleteRecord
+
+Exit_b_excluir_Click:
+    Exit Sub
+
+Err_b_excluir_Click:
+    MsgBox Err.Description
+    Resume Exit_b_excluir_Click
+
+        Case Is = vbNo
+      
+    End Select
+End Sub
+Private Sub b_salvar_Click()
+On Error GoTo Err_b_salvar_Click
+
+'Ao clicar no botão salvar libera os botões abaixo:
+
+b_primeiro.Enabled = True
+b_anterior.Enabled = True
+b_proximo.Enabled = True
+b_ultimo.Enabled = True
+b_novo.Enabled = True
+b_editar.Enabled = True
+b_excluir.Enabled = True
+'b_salvar.Enabled = true
+b_imprimir.Enabled = True
+b_fechar.Enabled = True
+
+
+localiza.Enabled = True
+localiza1.Enabled = True
+b_atua_localiz.Enabled = True
+
+'Ao clicar no botão salvar bloqueia os campo abaixo para edição:
+cod_conta_contabil.Enabled = False
+descricao_conta_contabil.Enabled = False
+grupo_conta_contabil.Enabled = False
+obs_conta_contabil.Enabled = False
+
+    DoCmd.RunCommand acCmdSaveRecord
+    DoCmd.RunCommand acCmdRefresh
+
+Exit_b_salvar_Click:
+    Exit Sub
+
+Err_b_salvar_Click:
+    MsgBox Err.Description
+    Resume Exit_b_salvar_Click
+    
+End Sub
+Private Sub b_fechar_Click()
+
+    DoCmd.Close
+    
+End Sub
+
+Private Sub Form_Load()
+
+'Call acesso_frm_produto
+
+End Sub
+
+Private Sub Form_Open(Cancel As Integer)
+
+Me.Caption = DLookup("[caption_parametro]", "tbl_parametros")
+
+'Ao abrir bloqueia os campo abaixo para edição:
+cod_conta_contabil.Enabled = False
+descricao_conta_contabil.Enabled = False
+grupo_conta_contabil.Enabled = False
+obs_conta_contabil.Enabled = False
+
+
+End Sub
+
+Private Sub localiza_AfterUpdate()
+
+    ' Encontrar o registro que coincide com o controle.
+    Dim rs As Object
+
+    Set rs = Me.Recordset.Clone
+    rs.FindFirst "[cod_conta_contabil] = " & Str(Me![localiza])
+    Me.Bookmark = rs.Bookmark
+
+End Sub
+
+
+Private Sub localiza1_Change()
+
+    On Error Resume Next
+    Dim I As Integer
+    Dim strProcura As String, intPos As Integer
+    Dim strList As String
+    strProcura = UCase$(Me.localiza1.Text)
+    intPos = Len(strProcura)
+    If intPos Then
+        For I = 0 To localiza.ListCount - 1
+            strList = Me.localiza.Column(1, I)
+            If UCase$(Left(strList, intPos)) = strProcura Then
+                Me.localiza.Selected(I) = True
+                Selecionado = True
+                Exit For
+            Else
+                Me.localiza.Selected(I) = False
+                Selecionado = False
+            End If
+        Next
+    End If
+    
+End Sub

@@ -1,0 +1,269 @@
+' Módulo: mod_ribbon
+' Tipo:   Módulo Padrão
+' Linhas: 265
+' ────────────────────────────────────────────────────────────
+
+
+Option Compare Database
+Public objRibbon As IRibbonUI
+
+Public Sub fncRibbon(ribbon As IRibbonUI)
+On Error Resume Next
+'---------------------------------------------
+'objRibbon servirá para realizarmos alterações
+'na ribbon em tempo de execução
+'----------------------------------------------
+Set objRibbon = ribbon
+End Sub
+
+Public Sub fncOnAction(control As IRibbonControl)
+On Error GoTo trataerro
+Select Case control.ID
+
+Case "frm_cargo_colaborador"
+DoCmd.OpenForm "frm_cargo_colaborador", , , , , acWindowNormal
+
+Case "frm_centro_custo"
+DoCmd.OpenForm "frm_centro_custo", , , , , acWindowNormal
+
+Case "frm_colaborador"
+DoCmd.OpenForm "frm_colaborador", , , , , acWindowNormal
+
+Case "frm_combustivel"
+DoCmd.OpenForm "frm_combustivel", , , , , acWindowNormal
+
+Case "frm_compartimento_equipamento"
+DoCmd.OpenForm "frm_compartimento_equipamento", , , , , acWindowNormal
+
+Case "frm_conta_contabil"
+DoCmd.OpenForm "frm_conta_contabil", , , , , acWindowNormal
+
+Case "frm_equipamento"
+DoCmd.OpenForm "frm_equipamento", , , , , acWindowNormal
+
+Case "frm_fornecedor"
+DoCmd.OpenForm "frm_fornecedor", , , , , acWindowNormal
+
+Case "frm_grupo_insumo"
+DoCmd.OpenForm "frm_grupo_insumo", , , , , acWindowNormal
+
+Case "frm_insumo"
+DoCmd.OpenForm "frm_insumo", , , , , acWindowNormal
+
+Case "frm_manutencao"
+DoCmd.OpenForm "frm_manutencao", , , , , acWindowNormal
+
+Case "frm_tipo_equipamento"
+DoCmd.OpenForm "frm_tipo_equipamento", , , , , acWindowNormal
+
+Case "frm_tipo_servico"
+DoCmd.OpenForm "frm_tipo_servico", , , , , acWindowNormal
+
+Case "frm_unidade_medida"
+DoCmd.OpenForm "frm_unidade_medida", , , , , acWindowNormal
+
+Case "frm_abastecimento"
+DoCmd.OpenForm "frm_abastecimento", , , , , acWindowNormal
+
+Case "frmc_equipamento_plano"
+DoCmd.OpenForm "frmc_equipamento_plano", , , , , acWindowNormal
+
+Case "frmc_manutencao"
+DoCmd.OpenForm "frmc_manutencao", , , , , acWindowNormal
+
+Case "frmc_abastecimento"
+DoCmd.OpenForm "frmc_abastecimento", , , , , acWindowNormal
+
+Case "frmc_historico"
+DoCmd.OpenForm "frmc_historico", , , , , acWindowNormal
+
+Case "frmc_equipamento_plano_alerta"
+DoCmd.OpenForm "frmc_equipamento_plano_alerta", , , , , acWindowNormal
+
+Case "frm_atividade"
+DoCmd.OpenForm "frm_atividade", , , , , acWindowNormal
+
+Case "frm_ordem_servico"
+DoCmd.OpenForm "frm_ordem_servico", , , , , acWindowNormal
+
+Case "frmc_atividade"
+DoCmd.OpenForm "frmc_atividade", , , , , acWindowNormal
+
+Case "frmc_ordem_servico"
+DoCmd.OpenForm "frmc_ordem_servico", , , , , acWindowNormal
+
+Case "frmc_equipamento"
+DoCmd.OpenForm "frmc_equipamento", , , , , acWindowNormal
+
+'*************************************************************************
+
+Case "mcr_manut"
+DoCmd.OpenForm "Manutenção", , , , , acWindowNormal
+
+Case "mcr_Sair"
+DoCmd.RunMacro "mcr_Sair"
+
+Case "mcr_logoff"
+DoCmd.RunMacro "mcr_logoff"
+
+
+    Case Else
+    
+        
+End Select
+sair:
+    Exit Sub
+trataerro:
+    MsgBox "Erro: " & Err.Number & vbCrLf & Err.Description, vbCritical, "Aviso", Err.HelpFile, Err.HelpContext
+    Resume sair:
+End Sub
+
+
+
+'*********************************************
+
+Sub fncGetItemCount(control As IRibbonControl, count)
+'Determina o número de imagens a serem exibidas.
+count = DCount("idproduto", "tblImagensProdutos", "idproduto=" & idprod)
+End Sub
+ 
+Sub fncGetItemWidth(control As IRibbonControl, width)
+'Determina o comprimento das imagens em pixels.
+width = intLargura
+End Sub
+ 
+Sub fncGetItemHeight(control As IRibbonControl, height)
+'Determina a altura das imagens em pixels.
+height = intAltura
+End Sub
+ 
+Sub fncGetItemLabel(control As IRibbonControl, index As Integer, label)
+'Carrega o nome das lmagens no label.
+label = DLookup("produto", "tblImagensprodutos", "idx =" & index & " AND idproduto=" & idprod)
+End Sub
+ 
+Public Sub fncGetItemImage(control As IRibbonControl, index As Integer, Image)
+Dim strNomeImagem As String
+Dim strCaminho As String
+
+'Captura nome da imagem da tabela tblImagensprodutos
+strNomeImagem = DLookup("imagem", "tblImagensprodutos", "idx =" & index & " AND idproduto=" & idprod)
+
+'Verifica se o formulário fmImagensRibbons está aberto
+If Not CurrentProject.AllForms("frmImgRibbons").IsLoaded Then
+    'Abre formulário para somente leitura e oculto
+    DoCmd.OpenForm "frmImgRibbons", acNormal, , , acFormReadOnly, acHidden
+    'Passa para variável attanexo o campo imagens do formulário
+    Set attAnexo = Forms("frmImgRibbons").Controls("Imagens")
+End If
+
+'Verifica se a imagem tem extensão PNG ou ICO para aplicar a função de transformação LoadImage
+If InStr(strNomeImagem, ".png") > 0 Or InStr(strNomeImagem, ".ico") > 0 Then
+    'Informa local e nome da imagem PNG ou ICO, extraída da tabela tblImagensRibbons
+    strCaminho = fncExtrairImagem(strNomeImagem)
+    'Transforma imagem PNG ou ICO em BMP e passa para a ribbon
+    Set Image = LoadImage(strCaminho)
+    'Deleta arquivo PNG ou ICO da pasta temporária Temp
+    Kill strCaminho
+Else
+    'Carrega imagens JPG, BMP ou GIF
+    Set Image = attAnexo.PictureDisp(strNomeImagem)
+End If
+End Sub
+ 
+Sub fncGetItemId(control As IRibbonControl, index As Integer, ItemId)
+'gera o ID exclusivo obrigatório.
+ItemId = "itm" & (1 + index)
+End Sub
+ 
+Sub fncGetSelectedItemId(control As IRibbonControl, ItemId)
+'seleciona uma imagem da gallery.
+'ItemId = "itm6"
+End Sub
+ 
+Sub fncOnActionGa(control As IRibbonControl, selectedId As String, selectedIndex As Integer)
+Dim varGal As Variant
+varGal = DLookup("produto", "tblImagensprodutos", "idx =" & selectedIndex & " AND idproduto=" & idprod)
+'Captura os valores de uma lista, mas poderia ser de uma tabela.
+Select Case control.ID
+    Case "ga2"
+        MsgBox "Clicou na imagem : " & vbCrLf & vbCrLf & varGal, vbInformation, "Gallery"
+End Select
+End Sub
+
+
+Sub fncLoadImage(imageId As String, ByRef Image)
+Dim strCaminho As String
+'Verifica se o formulário fmImagensRibbons está aberto
+If Not CurrentProject.AllForms("frmImgRibbons").IsLoaded Then
+    'Abre formulário para somente leitura e oculto
+    DoCmd.OpenForm "frmImgRibbons", acNormal, , , acFormReadOnly, acHidden
+    'Passa para variável attanexo o campo imagens do formulário
+    Set attAnexo = Forms("frmImgRibbons").Controls("Imagens")
+End If
+
+'Verifica se a imagem tem extensão PNG ou ICO para aplicar a função de transformação LoadImage
+If InStr(imageId, ".png") > 0 Or InStr(imageId, ".ico") > 0 Then
+    'Informa local e nome da imagem PNG ou ICO, extraída da tabela tblImagensRibbons
+    strCaminho = fncExtrairImagem(imageId)
+    'Transforma imagem PNG ou ICO em BMP e passa para a ribbon
+    Set Image = LoadImage(strCaminho)
+    'Deleta arquivo PNG ou ICO da pasta temporária Temp
+     Kill strCaminho
+Else
+    'Carrega imagens JPG, BMP ou GIF
+    Set Image = attAnexo.PictureDisp(imageId)
+End If
+End Sub
+
+Public Function fncExtrairImagem(strNomeImagem As String) As String
+
+On Error GoTo Trato
+
+Dim strCaminho As String
+Dim rsPai As DAO.Recordset
+Dim rsFilho As DAO.Recordset2
+Dim fld As Field2
+Dim fld2 As Field2
+
+strCaminho = CurrentProject.Path & "\Temp"
+
+Set rsPai = CurrentDb.OpenRecordset("tblImagensRibbons")
+Set rsFilho = rsPai.Fields("imagemRibbon").Value
+Set fld = rsFilho.Fields("filedata")
+Set fld2 = rsFilho.Fields("Filename")
+
+If Len(Dir(strCaminho, vbDirectory + vbHidden) & "") = 0 Then
+    FileSystem.MkDir (strCaminho)
+    FileSystem.SetAttr strCaminho, vbHidden
+End If
+
+Do While Not rsFilho.EOF
+    If fld2.Value = strNomeImagem Then
+        fld.SaveToFile (strCaminho)
+        Exit Do
+    End If
+    rsFilho.MoveNext
+Loop
+Set fld2 = Nothing
+Set fld = Nothing
+Set rsFilho = Nothing
+Set rsPai = Nothing
+
+fncExtrairImagem = strCaminho & "\" & strNomeImagem
+
+Exit Function
+Trato: Call ExplicaErro
+
+End Function
+
+Public Function fncMinimizaRibbon() As Boolean
+Dim ws As Object
+Set ws = CreateObject("WScript.shell")
+If Application.CommandBars("ribbon").height > 130 Then
+   ws.SendKeys "^{f1}"
+End If
+Set ws = Nothing
+End Function
+
+

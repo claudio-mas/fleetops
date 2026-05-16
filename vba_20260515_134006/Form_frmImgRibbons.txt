@@ -1,0 +1,5 @@
+' Módulo: Form_frmImgRibbons
+' Tipo:   Documento
+' Linhas: 0
+' ────────────────────────────────────────────────────────────
+

@@ -1,0 +1,17 @@
+' Módulo: Report_rpt_equipamento_002
+' Tipo:   Documento
+' Linhas: 13
+' ────────────────────────────────────────────────────────────
+
+Option Compare Database
+
+Private Sub Report_Close()
+
+DoCmd.Close acForm, "frmc_equipamento_plano_alerta"
+
+End Sub
+Private Sub Report_Open(Cancel As Integer)
+
+Me.Caption = DLookup("[caption_relatorio_parametro]", "tbl_parametros")
+
+End Sub

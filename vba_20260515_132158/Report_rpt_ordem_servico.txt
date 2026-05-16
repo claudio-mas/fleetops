@@ -1,0 +1,18 @@
+' Módulo: Report_rpt_ordem_servico
+' Tipo:   Documento
+' Linhas: 13
+' ────────────────────────────────────────────────────────────
+
+Option Compare Database
+
+Private Sub Report_Close()
+
+DoCmd.Close acForm, "frm_ordem_servico"
+
+End Sub
+
+Private Sub Report_Open(Cancel As Integer)
+
+Me.Caption = DLookup("[caption_relatorio_parametro]", "tbl_parametros")
+
+End Sub

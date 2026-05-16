@@ -1,0 +1,12 @@
+' Módulo: mod_ribbon_new
+' Tipo:   Módulo Padrão
+' Linhas: 8
+' ────────────────────────────────────────────────────────────
+
+Option Compare Database
+
+Public Sub fncGetVisible(control As IRibbonControl, ByRef visible)
+
+visible = True
+
+End Sub

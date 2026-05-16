@@ -1,0 +1,5 @@
+' Módulo: Report_rpts_manutencao_cklist
+' Tipo:   Documento
+' Linhas: 0
+' ────────────────────────────────────────────────────────────
+

@@ -1,0 +1,59 @@
+' Módulo: Form_nManutenção
+' Tipo:   Documento
+' Linhas: 54
+' ────────────────────────────────────────────────────────────
+
+
+
+Option Compare Database
+
+Private Sub Bloqueia_Click()
+'Trava a tecla shift (veja módulo Shift)
+AlterarPropriedade "AllowBypassKey", dbBoolean, False
+'Oculta objetos marcados como ocultos na janela banco de dados
+Application.SetOption "Mostrar Objetos Ocultos", False
+
+End Sub
+
+
+
+Private Sub Form_Open(Cancel As Integer)
+
+Me.Caption = DLookup("[caption_parametro]", "tbl_parametros")
+
+'SetFormIcon Me.hWnd, "C:\Arquivos de programas\Suporte\9.ico"
+
+End Sub
+
+Private Sub Libera_Click()
+'Libera a tecla shift (veja módulo Shift)
+AlterarPropriedade "AllowBypassKey", dbBoolean, True
+End Sub
+Private Sub Comando6_Click()
+On Error GoTo Err_Comando6_Click
+
+
+    DoCmd.Close
+
+Exit_Comando6_Click:
+    Exit Sub
+
+Err_Comando6_Click:
+    MsgBox Err.Description
+    Resume Exit_Comando6_Click
+    
+End Sub
+Private Sub Comando7_Click()
+On Error GoTo Err_Comando7_Click
+
+
+    DoCmd.Close
+
+Exit_Comando7_Click:
+    Exit Sub
+
+Err_Comando7_Click:
+    MsgBox Err.Description
+    Resume Exit_Comando7_Click
+    
+End Sub

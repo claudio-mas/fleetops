@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rtk git *)",
+      "Bash(rtk git -C c:/Projeto/Access commit -m ' *)",
+      "PowerShell(\\(Get-Command codegraph -ErrorAction SilentlyContinue\\).Source; codegraph --version 2>&1 | Select-Object -First 3)",
+      "PowerShell(codegraph init --help 2>&1)",
+      "PowerShell(codegraph init -i c:\\\\Projeto\\\\Access 2>&1)",
+      "Skill(superpowers:writing-plans)",
+      "Skill(superpowers:writing-plans:*)",
+      "PowerShell(New-Item -ItemType Directory -Force -Path \"c:\\\\Projeto\\\\Access\\\\docs\\\\superpowers\\\\plans\")"
+    ]
+  }
+}

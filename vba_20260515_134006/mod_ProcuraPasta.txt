@@ -1,0 +1,80 @@
+' Módulo: mod_ProcuraPasta
+' Tipo:   Módulo Padrão
+' Linhas: 76
+' ────────────────────────────────────────────────────────────
+
+
+Option Compare Database
+Option Explicit
+
+Private Type BROWSEINFO
+    hwndOwner As Long
+    pidlRoot As Long
+    pszDisplayName As String
+    lpszTitle As String
+    ulFlags As BrowseForFolderConstants
+    lpfn As Long
+    LParam As Long
+    iImage As Long
+End Type
+Private Enum BrowseForFolderConstants
+    BIF_RETURNONLYFSDIRS = &H1
+    BIF_DONTGOBELOWDOMAIN = &H2
+    BIF_STATUSTEXT = &H4
+    BIF_RETURNFSANCESTORS = &H8
+    BIF_EDITBOX = &H10
+    BIF_VALIDATE = &H20
+    BIF_NEWDIALOGSTYLE = &H40
+    BIF_USENEWUI = (BIF_NEWDIALOGSTYLE Or BIF_EDITBOX)
+    BIF_BROWSEINCLUDEURLS = &H80
+    BIF_UAHINT = &H100
+    BIF_NONEWFOLDERBUTTON = &H200
+    BIF_NOTRANSLATETARGETS = &H400
+    BIF_BROWSEFORCOMPUTER = &H1000
+    BIF_BROWSEFORPRINTER = &H2000
+    BIF_BROWSEINCLUDEFILES = &H4000
+    BIF_SHAREABLE = &H8000
+End Enum
+
+#If Win64 Then
+Private Declare PtrSafe Function SHBrowseForFolder Lib "Shell32" Alias "SHBrowseForFolderA" _
+    (lpbi As BROWSEINFO) As Long
+#Else
+Private Declare Function SHBrowseForFolder Lib "Shell32" Alias "SHBrowseForFolderA" _
+    (lpbi As BROWSEINFO) As Long
+#End If
+
+#If Win64 Then
+Private Declare PtrSafe Function SHGetPathFromIDList Lib "Shell32" Alias "SHGetPathFromIDListA" _
+    (ByVal pidl As Long, ByVal pszPath As String) As Long
+#Else
+Private Declare Function SHGetPathFromIDList Lib "Shell32" Alias "SHGetPathFromIDListA" _
+    (ByVal pidl As Long, ByVal pszPath As String) As Long
+#End If
+   
+
+Public Function fncProcuraPasta(ByVal hWnd As Long, ByVal Descrição As String) As String
+Dim uInfo As BROWSEINFO
+Dim pidl As Long, nPos As Long
+Dim sPath As String
+On Error Resume Next
+    With uInfo
+        .hwndOwner = hWnd
+        .pidlRoot = 0
+        .lpszTitle = Descrição
+        .ulFlags = BIF_USENEWUI Or BIF_VALIDATE
+    End With
+pidl = SHBrowseForFolder(uInfo)
+sPath = Space(255)
+If SHGetPathFromIDList(pidl, sPath) Then
+    fncProcuraPasta = Left(sPath, InStr(sPath, Chr(0)) - 1)
+Else
+    fncProcuraPasta = ""
+End If
+End Function
+
+
+
+
+
+

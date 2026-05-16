@@ -1,0 +1,14 @@
+' Módulo: Form_INICIAL
+' Tipo:   Documento
+' Linhas: 9
+' ────────────────────────────────────────────────────────────
+
+Option Compare Database
+
+Private Sub Form_Open(Cancel As Integer)
+
+    DoCmd.Maximize
+    DoCmd.OpenForm "LOGIN_INICIAL"
+
+
+End Sub

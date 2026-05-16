@@ -1,0 +1,29 @@
+' Módulo: Form_troca_senha
+' Tipo:   Documento
+' Linhas: 24
+' ────────────────────────────────────────────────────────────
+
+Private Sub b_fechar_Click()
+
+DoCmd.Close
+
+End Sub
+
+Private Sub Form_Open(Cancel As Integer)
+
+'SetFormIcon Me.hWnd, "C:\Arquivos de programas\Suporte\4.ico"
+DoCmd.ApplyFilter , "[nome_completo] LIKE'" & Forms![frm_menu]![usuario_logado] & "*'"
+
+
+End Sub
+
+Private Sub senha1_AfterUpdate()
+DoCmd.Close acForm, "troca_senha"
+End Sub
+
+
+Private Sub Form_Load()
+
+'Call acesso_troca_senha_opt
+
+End Sub

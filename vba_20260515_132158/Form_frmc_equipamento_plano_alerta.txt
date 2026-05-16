@@ -1,0 +1,57 @@
+' Módulo: Form_frmc_equipamento_plano_alerta
+' Tipo:   Documento
+' Linhas: 52
+' ────────────────────────────────────────────────────────────
+
+
+
+
+Private Sub b_consultar_Click()
+
+Me.Refresh
+
+End Sub
+
+
+Private Sub b_editar_Click()
+
+'DoCmd.OpenForm "frm_equipamento", acNormal, "", "[Forms]![frmc_equipamento_plano].[frmcs_equipamento_plano]![id_equipamento_plano]=[cod_equipamento]", , acNormal
+
+
+End Sub
+
+Private Sub b_excel_Click()
+
+DoCmd.OutputTo acOutputForm, "frmcs_equipamento_plano_alerta", "Excel97-Excel2003Workbook(*.xls)", "", True, "", 0, acExportQualityScreen
+
+End Sub
+
+Private Sub b_fechar_Click()
+
+DoCmd.Close
+
+End Sub
+
+Private Sub b_imprimir_Click()
+
+    DoCmd.OpenReport "rpt_equipamento_plano_alerta", acViewPreview
+    DoCmd.OpenForm "frmc_equipamento_plano_alerta", acNormal, "", "", , acHidden
+
+End Sub
+
+Private Sub Form_Load()
+
+'Call acesso_frmc_fluxo_contas_rel
+
+End Sub
+
+
+Private Sub Form_Open(Cancel As Integer)
+
+Me.Caption = DLookup("[caption_parametro]", "tbl_parametros")
+
+'Me.D.Value = "Não"
+'Me.Refresh
+
+
+End Sub

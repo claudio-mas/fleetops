@@ -1,0 +1,249 @@
+' Módulo: mod_niveis_acesso
+' Tipo:   Módulo Padrão
+' Linhas: 245
+' ────────────────────────────────────────────────────────────
+
+
+Option Compare Database
+
+Public Function acesso_frm_cliente_cad()
+Dim A
+A = Forms![ver_nivel]![acesso_frm_cliente_cad]
+If A = 0 Then
+    MsgBox "Usuario não tem acesso a esta função, contate o Administrador", vbCritical, "ERD Sistemas"
+    DoCmd.Close acForm, "frm_cliente"
+Else
+End If
+End Function
+
+Public Function acesso_frm_representante_cad()
+Dim A
+A = Forms![ver_nivel]![acesso_frm_representante_cad]
+If A = 0 Then
+    MsgBox "Usuario não tem acesso a esta função, contate o Administrador", vbCritical, "ERD Sistemas"
+    DoCmd.Close acForm, "frm_representante"
+Else
+End If
+End Function
+
+Public Function acesso_frm_transportadora_cad()
+Dim A
+A = Forms![ver_nivel]![acesso_frm_transportadora_cad]
+If A = 0 Then
+    MsgBox "Usuario não tem acesso a esta função, contate o Administrador", vbCritical, "ERD Sistemas"
+    DoCmd.Close acForm, "frm_transportadora"
+Else
+End If
+End Function
+
+Public Function acesso_frm_fornecedor_cad()
+Dim A
+A = Forms![ver_nivel]![acesso_frm_fornecedor_cad]
+If A = 0 Then
+    MsgBox "Usuario não tem acesso a esta função, contate o Administrador", vbCritical, "ERD Sistemas"
+    DoCmd.Close acForm, "frm_fornecedor"
+Else
+End If
+End Function
+
+Public Function acesso_frm_produto_cad()
+Dim A
+A = Forms![ver_nivel]![acesso_frm_produto_cad]
+If A = 0 Then
+    MsgBox "Usuario não tem acesso a esta função, contate o Administrador", vbCritical, "ERD Sistemas"
+    DoCmd.Close acForm, "frm_produto"
+Else
+End If
+End Function
+
+Public Function acesso_frm_colecao_produto_cad()
+Dim A
+A = Forms![ver_nivel]![acesso_frm_colecao_produto_cad]
+If A = 0 Then
+    MsgBox "Usuario não tem acesso a esta função, contate o Administrador", vbCritical, "ERD Sistemas"
+    DoCmd.Close acForm, "frm_colecao_produto"
+Else
+End If
+End Function
+
+Public Function acesso_frm_pulseira_cad()
+Dim A
+A = Forms![ver_nivel]![acesso_frm_pulseira_cad]
+If A = 0 Then
+    MsgBox "Usuario não tem acesso a esta função, contate o Administrador", vbCritical, "ERD Sistemas"
+    DoCmd.Close acForm, "frm_pulseira"
+Else
+End If
+End Function
+
+Public Function acesso_frm_fluxo_financeiro_cad()
+Dim A
+A = Forms![ver_nivel]![acesso_frm_fluxo_financeiro_cad]
+If A = 0 Then
+    MsgBox "Usuario não tem acesso a esta função, contate o Administrador", vbCritical, "ERD Sistemas"
+    DoCmd.Close acForm, "frm_fluxo_financeiro"
+Else
+End If
+End Function
+
+Public Function acesso_frm_pedido_produto_tar()
+Dim A
+A = Forms![ver_nivel]![acesso_frm_pedido_produto_tar]
+If A = 0 Then
+    MsgBox "Usuario não tem acesso a esta função, contate o Administrador", vbCritical, "ERD Sistemas"
+    DoCmd.Close acForm, "frm_pedido_produto"
+Else
+End If
+End Function
+
+Public Function acesso_frm_pedido_pulseira_tar()
+Dim A
+A = Forms![ver_nivel]![acesso_frm_pedido_pulseira_tar]
+If A = 0 Then
+    MsgBox "Usuario não tem acesso a esta função, contate o Administrador", vbCritical, "ERD Sistemas"
+    DoCmd.Close acForm, "frm_pedido_pulseira"
+Else
+End If
+End Function
+
+Public Function acesso_frm_contas_pagar_tar()
+Dim A
+A = Forms![ver_nivel]![acesso_frm_contas_pagar_tar]
+If A = 0 Then
+    MsgBox "Usuario não tem acesso a esta função, contate o Administrador", vbCritical, "ERD Sistemas"
+    DoCmd.Close acForm, "frm_contas_pagar"
+Else
+End If
+End Function
+
+Public Function acesso_frm_contas_receber_tar()
+Dim A
+A = Forms![ver_nivel]![acesso_frm_contas_receber_tar]
+If A = 0 Then
+    MsgBox "Usuario não tem acesso a esta função, contate o Administrador", vbCritical, "ERD Sistemas"
+    DoCmd.Close acForm, "frm_contas_receber"
+Else
+End If
+End Function
+
+Public Function acesso_frmc_pedido_geral_rel()
+Dim A
+A = Forms![ver_nivel]![acesso_frmc_pedido_geral_rel]
+If A = 0 Then
+    MsgBox "Usuario não tem acesso a esta função, contate o Administrador", vbCritical, "ERD Sistemas"
+    DoCmd.Close acForm, "frmc_pedido_geral"
+Else
+End If
+End Function
+
+Public Function acesso_frmc_pedido_item_geral_rel()
+Dim A
+A = Forms![ver_nivel]![acesso_frmc_pedido_item_geral_rel]
+If A = 0 Then
+    MsgBox "Usuario não tem acesso a esta função, contate o Administrador", vbCritical, "ERD Sistemas"
+    DoCmd.Close acForm, "frmc_pedido_item_geral"
+Else
+End If
+End Function
+
+Public Function acesso_frmc_contas_pagar_rel()
+Dim A
+A = Forms![ver_nivel]![acesso_frmc_contas_pagar_rel]
+If A = 0 Then
+    MsgBox "Usuario não tem acesso a esta função, contate o Administrador", vbCritical, "ERD Sistemas"
+    DoCmd.Close acForm, "frmc_contas_pagar"
+Else
+End If
+End Function
+
+Public Function acesso_frmc_contas_receber_rel()
+Dim A
+A = Forms![ver_nivel]![acesso_frmc_contas_receber_rel]
+If A = 0 Then
+    MsgBox "Usuario não tem acesso a esta função, contate o Administrador", vbCritical, "ERD Sistemas"
+    DoCmd.Close acForm, "frmc_contas_receber"
+Else
+End If
+End Function
+
+Public Function acesso_frmc_fluxo_contas_rel()
+Dim A
+A = Forms![ver_nivel]![acesso_frmc_fluxo_contas_rel]
+If A = 0 Then
+    MsgBox "Usuario não tem acesso a esta função, contate o Administrador", vbCritical, "ERD Sistemas"
+    DoCmd.Close acForm, "frmc_fluxo_contas"
+Else
+End If
+End Function
+
+Public Function acesso_frmc_comissao_representante_rel()
+Dim A
+A = Forms![ver_nivel]![acesso_frmc_comissao_representante_rel]
+If A = 0 Then
+    MsgBox "Usuario não tem acesso a esta função, contate o Administrador", vbCritical, "ERD Sistemas"
+    DoCmd.Close acForm, "frmc_comissao_representante"
+Else
+End If
+End Function
+
+Public Function acesso_frmc_produto_rel()
+Dim A
+A = Forms![ver_nivel]![acesso_frmc_produto_rel]
+If A = 0 Then
+    MsgBox "Usuario não tem acesso a esta função, contate o Administrador", vbCritical, "ERD Sistemas"
+    DoCmd.Close acForm, "frmc_produto"
+Else
+End If
+End Function
+
+Public Function acesso_frmc_pulseira_rel()
+Dim A
+A = Forms![ver_nivel]![acesso_frmc_pulseira_rel]
+If A = 0 Then
+    MsgBox "Usuario não tem acesso a esta função, contate o Administrador", vbCritical, "ERD Sistemas"
+    DoCmd.Close acForm, "frmc_pulseira"
+Else
+End If
+End Function
+
+Public Function acesso_manut_opt()
+Dim A
+A = Forms![ver_nivel]![acesso_manut_opt]
+If A = 0 Then
+    MsgBox "Usuario não tem acesso a esta função, contate o Administrador", vbCritical, "ERD Sistemas"
+    DoCmd.Close acForm, "manut"
+Else
+End If
+End Function
+
+Public Function acesso_troca_senha_opt()
+Dim A
+A = Forms![ver_nivel]![acesso_troca_senha_opt]
+If A = 0 Then
+    MsgBox "Usuario não tem acesso a esta função, contate o Administrador", vbCritical, "ERD Sistemas"
+    DoCmd.Close acForm, "troca_senha"
+Else
+End If
+End Function
+
+Public Function acesso_backup_opt()
+Dim A
+A = Forms![ver_nivel]![acesso_backup_opt]
+If A = 0 Then
+    MsgBox "Usuario não tem acesso a esta função, contate o Administrador", vbCritical, "ERD Sistemas"
+    DoCmd.Close acForm, "backup"
+Else
+End If
+End Function
+
+'acesso_frm_usuario_opt
+
+Public Function acesso_frm_usuario_opt1()
+Dim A
+A = Forms![ver_nivel]![acesso_frm_usuario_opt]
+If A = 0 Then
+    MsgBox "Usuario não tem acesso a esta função, contate o Administrador", vbCritical, "ERD Sistemas"
+    DoCmd.Close acForm, "frm_usuario"
+Else
+End If
+End Function

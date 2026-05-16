@@ -1,0 +1,85 @@
+' Módulo: Form_frmc_abastecimento
+' Tipo:   Documento
+' Linhas: 80
+' ────────────────────────────────────────────────────────────
+
+
+
+
+Private Sub b_consultar_Click()
+
+Me.Refresh
+
+End Sub
+
+
+Private Sub b_editar_Click()
+
+DoCmd.OpenForm "frm_abastecimento", acNormal, "", "[Forms]![frmc_abastecimento].[frmcs_abastecimento]![cod_abastecimento]=[cod_abastecimento]", , acNormal
+
+
+End Sub
+
+Private Sub b_excel_Click()
+
+DoCmd.OutputTo acOutputForm, "frmcs_abastecimento", "Excel97-Excel2003Workbook(*.xls)", "", True, "", 0, acExportQualityScreen
+
+End Sub
+
+Private Sub b_fechar_Click()
+
+DoCmd.Close
+
+End Sub
+
+Private Sub b_imprimir_Click()
+
+If Me.quadro_select = 1 Then
+    DoCmd.OpenReport "rpt_abastecimento_001", acViewPreview
+    DoCmd.OpenForm "frmc_abastecimento", acNormal, "", "", , acHidden
+Else
+End If
+
+If Me.quadro_select = 2 Then
+    DoCmd.OpenReport "rpt_abastecimento_002", acViewPreview
+    DoCmd.OpenForm "frmc_abastecimento", acNormal, "", "", , acHidden
+Else
+End If
+
+If Me.quadro_select = 3 Then
+    DoCmd.OpenReport "rpt_abastecimento_003", acViewPreview
+    DoCmd.OpenForm "frmc_abastecimento", acNormal, "", "", , acHidden
+Else
+End If
+
+If Me.quadro_select = 4 Then
+    DoCmd.OpenReport "rpt_abastecimento_004", acViewPreview
+    DoCmd.OpenForm "frmc_abastecimento", acNormal, "", "", , acHidden
+Else
+End If
+
+If Me.quadro_select = 5 Then
+    DoCmd.OpenReport "rpt_abastecimento_005", acViewPreview
+    DoCmd.OpenForm "frmc_abastecimento", acNormal, "", "", , acHidden
+Else
+End If
+
+
+End Sub
+
+Private Sub Form_Load()
+
+'Call acesso_frmc_fluxo_contas_rel
+
+End Sub
+
+
+Private Sub Form_Open(Cancel As Integer)
+
+Me.Caption = DLookup("[caption_parametro]", "tbl_parametros")
+
+'Me.D.Value = "Não"
+'Me.Refresh
+
+
+End Sub

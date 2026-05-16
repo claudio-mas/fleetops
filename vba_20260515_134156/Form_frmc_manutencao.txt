@@ -1,0 +1,71 @@
+' Módulo: Form_frmc_manutencao
+' Tipo:   Documento
+' Linhas: 66
+' ────────────────────────────────────────────────────────────
+
+
+
+
+Private Sub b_consultar_Click()
+
+Me.Refresh
+
+End Sub
+
+
+Private Sub b_editar_Click()
+
+DoCmd.OpenForm "frm_manutencao", acNormal, "", "[Forms]![frmc_manutencao].[frmcs_manutencao]![cod_manutencao]=[cod_manutencao]", , acNormal
+
+End Sub
+
+Private Sub b_excel_Click()
+
+DoCmd.OutputTo acOutputForm, "frmcs_manutencao", "Excel97-Excel2003Workbook(*.xls)", "", True, "", 0, acExportQualityScreen
+
+End Sub
+
+Private Sub b_fechar_Click()
+
+DoCmd.Close
+
+End Sub
+
+Private Sub b_imprimir_Click()
+
+If Me.quadro_select = 1 Then
+    DoCmd.OpenReport "rpt_manutencao_001", acViewPreview
+    DoCmd.OpenForm "frmc_manutencao", acNormal, "", "", , acHidden
+Else
+End If
+
+If Me.quadro_select = 2 Then
+    DoCmd.OpenReport "rpt_manutencao_002", acViewPreview
+    DoCmd.OpenForm "frmc_manutencao", acNormal, "", "", , acHidden
+Else
+End If
+
+If Me.quadro_select = 3 Then
+    DoCmd.OpenReport "rpt_manutencao_003", acViewPreview
+    DoCmd.OpenForm "frmc_manutencao", acNormal, "", "", , acHidden
+Else
+End If
+
+End Sub
+
+Private Sub Form_Load()
+
+'Call acesso_frmc_fluxo_contas_rel
+
+End Sub
+
+
+Private Sub Form_Open(Cancel As Integer)
+
+Me.Caption = DLookup("[caption_parametro]", "tbl_parametros")
+
+'Me.D.Value = "Não"
+'Me.Refresh
+
+
+End Sub

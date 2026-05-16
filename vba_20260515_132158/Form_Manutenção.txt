@@ -1,0 +1,53 @@
+' Módulo: Form_Manutenção
+' Tipo:   Documento
+' Linhas: 48
+' ────────────────────────────────────────────────────────────
+
+
+Private Sub Comando28_Click()
+
+Dim A
+Dim B
+
+A = "rodoviasdotiete_controladoria_15"
+'B = Me!senha3.Value
+B = Me!senha.Value
+
+            If B = A Then
+                            
+                            'DoCmd.OpenForm "ver_nivel", acNormal, , , , acHidden
+                            DoCmd.Close acForm, "Manutenção"
+                            'DoCmd.Close acForm, "inicial"
+                            'DoCmd.Close acForm, "iMPORTAÇÃO"
+                            
+                            
+                            'MsgBox ("Seja Bem Vindo ao Novo Módulo do Suporte"), , "Bem Vindo"
+                            
+                            DoCmd.OpenForm "nManutenção"
+                            
+                            
+            Else
+             MsgBox ("Senha Incorreta, Favor Verificar!"), vbCritical, "ERD Sistemas - Acesso Restrito"
+             
+             'DoCmd.Close acForm, "ver_nivel"
+             'se.SetFocus
+             DoCmd.Close acForm, "nManutenção"
+             
+           End If
+
+
+End Sub
+
+Private Sub Comando30_Click()
+
+DoCmd.Close
+
+End Sub
+
+
+
+Private Sub Form_Open(Cancel As Integer)
+
+Me.Caption = DLookup("[caption_parametro]", "tbl_parametros")
+
+End Sub

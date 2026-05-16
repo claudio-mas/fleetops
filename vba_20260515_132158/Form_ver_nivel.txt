@@ -1,0 +1,10 @@
+' Módulo: Form_ver_nivel
+' Tipo:   Documento
+' Linhas: 5
+' ────────────────────────────────────────────────────────────
+
+Private Sub Form_Open(Cancel As Integer)
+DoCmd.ApplyFilter , "[usuario] LIKE'" & Forms![LOGIN_INICIAL]![us] & "*'"
+
+
+End Sub

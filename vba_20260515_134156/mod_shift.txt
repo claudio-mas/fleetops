@@ -1,0 +1,31 @@
+' Módulo: mod_shift
+' Tipo:   Módulo Padrão
+' Linhas: 26
+' ────────────────────────────────────────────────────────────
+
+Option Compare Database
+
+Function AlterarPropriedade(strPropName As String, varPropType As Variant, varPropValue As Variant) As Integer
+
+Dim dbs As Database, prp As Property
+Const conPropNotFoundError = 3270
+Set dbs = CurrentDb
+On Error GoTo Change_Err
+dbs.Properties(strPropName) = varPropValue
+AlterarPropriedade = True
+
+Change_Bye:
+Exit Function
+
+Change_Err:
+If Err = conPropNotFoundError Then ' Propriedade não localizada.
+
+Set prp = dbs.CreateProperty(strPropName, varPropType, varPropValue)
+dbs.Properties.Append prp
+Resume Next
+Else
+' Erro desconhecido.
+AlterarPropriedade = False
+Resume Change_Bye
+End If
+End Function

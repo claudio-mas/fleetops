@@ -1,0 +1,46 @@
+' Módulo: Form_frm_menu
+' Tipo:   Documento
+' Linhas: 42
+' ────────────────────────────────────────────────────────────
+
+Option Compare Database
+
+Private Sub b_logoof_Click()
+
+DoCmd.RunMacro "mcr_logoff"
+
+End Sub
+
+Private Sub Form_Activate()
+
+DoCmd.Maximize
+
+End Sub
+
+Private Sub Form_Load()
+
+'Form.InsideWidth = 8150
+'Form.InsideHeight = 4470
+DoCmd.Maximize
+
+End Sub
+
+Private Sub Form_Open(Cancel As Integer)
+
+DoCmd.Maximize
+
+End Sub
+
+Private Sub Form_Timer()
+
+'usuario_logado = Forms![ver_nivel]![nome_completo]
+'cargo = Forms![ver_nivel]![cargo]
+
+End Sub
+
+Private Sub b_exit_Click()
+
+DoCmd.RunMacro "mcr_sair"
+  
+End Sub
+

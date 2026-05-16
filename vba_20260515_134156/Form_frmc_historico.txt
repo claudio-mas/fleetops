@@ -1,0 +1,79 @@
+' Módulo: Form_frmc_historico
+' Tipo:   Documento
+' Linhas: 74
+' ────────────────────────────────────────────────────────────
+
+
+
+
+Private Sub b_consultar_Click()
+
+Me.Refresh
+
+End Sub
+
+
+Private Sub b_editar_Click()
+
+'DoCmd.OpenForm "frm_abastecimento", acNormal, "", "[Forms]![frmc_abastecimento].[frmcs_abastecimento]![cod_abastecimento]=[cod_abastecimento]", , acNormal
+
+
+End Sub
+
+Private Sub b_excel_Click()
+
+DoCmd.OutputTo acOutputForm, "frmcs_historico", "Excel97-Excel2003Workbook(*.xls)", "", True, "", 0, acExportQualityScreen
+
+End Sub
+
+Private Sub b_fechar_Click()
+
+DoCmd.Close
+
+End Sub
+
+Private Sub b_imprimir_Click()
+
+If Me.quadro_select = 1 Then
+    DoCmd.OpenReport "rpt_historico_001", acViewPreview
+    DoCmd.OpenForm "frmc_historico", acNormal, "", "", , acHidden
+Else
+End If
+
+If Me.quadro_select = 2 Then
+    DoCmd.OpenReport "rpt_historico_002", acViewPreview
+    DoCmd.OpenForm "frmc_historico", acNormal, "", "", , acHidden
+Else
+End If
+
+If Me.quadro_select = 3 Then
+    DoCmd.OpenReport "rpt_historico_003", acViewPreview
+    DoCmd.OpenForm "frmc_historico", acNormal, "", "", , acHidden
+Else
+End If
+
+If Me.quadro_select = 4 Then
+    DoCmd.OpenReport "rpt_historico_004", acViewPreview
+    DoCmd.OpenForm "frmc_historico", acNormal, "", "", , acHidden
+Else
+End If
+
+
+End Sub
+
+Private Sub Form_Load()
+
+'Call acesso_frmc_fluxo_contas_rel
+
+End Sub
+
+
+Private Sub Form_Open(Cancel As Integer)
+
+Me.Caption = DLookup("[caption_parametro]", "tbl_parametros")
+
+'Me.D.Value = "Não"
+'Me.Refresh
+
+
+End Sub

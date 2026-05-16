@@ -1,0 +1,83 @@
+' Módulo: Form_LOGIN_INICIAL
+' Tipo:   Documento
+' Linhas: 78
+' ────────────────────────────────────────────────────────────
+
+Option Compare Database
+
+Private Sub b_sair_Click()
+
+DoCmd.Quit acQuitSaveNone
+
+End Sub
+
+Private Sub Comando8_Click()
+Dim A
+Dim B
+
+A = Me!se.Value
+B = Me!senha3.Value
+
+            If B = A Then
+                            
+                            DoCmd.OpenForm "ver_nivel", acNormal, , , , acHidden
+                            'DoCmd.OpenForm "frmc_empresa", acNormal, , , , acHidden
+                            
+                            DoCmd.Close acForm, "LOGIN_INICIAL"
+                            DoCmd.Close acForm, "inicial"
+                            
+                            DoCmd.OpenForm "frm_Menu"
+                            DoCmd.OpenForm "frmc_equipamento_plano_alerta"
+                            
+                            'MsgBox ("Está é uma base para TESTES....."), , "Atenção..."
+                            
+                            
+            Else
+             MsgBox ("Senha Incorreta, Favor Verificar!"), vbCritical, "Erro:(002) - Senha"
+             
+             DoCmd.Close acForm, "ver_nivel"
+             se.SetFocus
+                        
+           End If
+
+End Sub
+
+
+Private Sub Form_Open(Cancel As Integer)
+
+Me.Caption = DLookup("[caption_parametro]", "tbl_parametros")
+
+
+Dim X
+Dim Y
+
+X = Me!falta_dias.Value
+Y = 0
+
+If X = 0 Then
+
+MsgBox ("Venceu o periodo de demonstração do sistema, contate o desenvolvedor"), vbInformation, "ERD Sistemas - www.erdsistemas.com.br"
+
+Me.us.Enabled = False
+Me.se.Enabled = False
+Me.Comando8.Enabled = False
+
+Else
+End If
+
+
+End Sub
+
+Private Sub us_AfterUpdate()
+ If (Eval("DLookUp(""[usuario]"",""[usuarios]"",""[usuario] = Form.[us] "") Is Null")) Then
+        MsgBox "Usuário não Cadastrado, Favor Verificar!", vbCritical, "Erro:(001) - Usuário"
+                        
+        us.SetFocus
+    Else
+            DoCmd.OpenForm "ver_nivel", acNormal, , , , acHidden
+            senha3 = [Forms]![ver_nivel]![senha]
+            DoCmd.Close acForm, "ver_nivel"
+            
+
+    End If
+End Sub
