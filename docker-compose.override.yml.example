@@ -1,0 +1,6 @@
+# Copy to docker-compose.override.yml for personal local overrides.
+# This file is gitignored.
+services:
+  postgres:
+    ports:
+      - "5433:5432"  # Use 5433 if 5432 is in use locally
