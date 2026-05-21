@@ -11,6 +11,10 @@ dependencies = [
     "pydantic>=2.10.0",
     "pydantic-settings>=2.7.0",
     "python-multipart>=0.0.20",
+    "fastapi-users[sqlalchemy]>=14.0.0",
+    "pwdlib[argon2]>=0.2.0",
+    "pyjwt[crypto]>=2.8.0",
+    "uuid6>=2022.10.25",
 ]
 
 [dependency-groups]
