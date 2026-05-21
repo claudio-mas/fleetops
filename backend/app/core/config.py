@@ -19,4 +19,4 @@ class Settings(BaseSettings):
     secret_key: str = Field(..., min_length=16)
 
 
-settings = Settings()  # type: ignore[call-arg]
+settings = Settings()
