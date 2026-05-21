@@ -29,6 +29,28 @@ services:
       timeout: 3s
       retries: 10
 
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: fleetops-api
+    environment:
+      ENVIRONMENT: ${ENVIRONMENT:-dev}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      SECRET_KEY: ${SECRET_KEY}
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_URL: ${REDIS_URL}
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./backend/app:/app/app:ro
+      - ./backend/alembic:/app/alembic:ro
+
 volumes:
   postgres_data:
   redis_data:
