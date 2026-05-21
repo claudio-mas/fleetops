@@ -1,3 +1,4 @@
+import uuid
 from datetime import datetime
 
 from sqlalchemy import DateTime, Integer, func, text
@@ -19,7 +20,7 @@ class TimestampMixin:
 
 
 class OperationalMixin(TimestampMixin):
-    created_by: Mapped[int | None] = mapped_column(PGUUID(as_uuid=True), nullable=True)
-    updated_by: Mapped[int | None] = mapped_column(PGUUID(as_uuid=True), nullable=True)
+    created_by: Mapped[uuid.UUID | None] = mapped_column(PGUUID(as_uuid=True), nullable=True)
+    updated_by: Mapped[uuid.UUID | None] = mapped_column(PGUUID(as_uuid=True), nullable=True)
     deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     version: Mapped[int] = mapped_column(Integer, server_default=text("1"), nullable=False)
