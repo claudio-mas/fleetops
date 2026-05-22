@@ -5,8 +5,6 @@ Revises: 0001
 Create Date: 2026-05-21
 """
 
-from __future__ import annotations
-
 import sqlalchemy as sa
 from alembic import op
 from sqlalchemy.dialects import postgresql
@@ -131,7 +129,7 @@ def downgrade() -> None:
     op.execute("DROP POLICY IF EXISTS tenant_isolation ON user_role")
     op.execute("ALTER TABLE user_role DISABLE ROW LEVEL SECURITY")
     op.drop_table("user_role")
-    op.execute("DROP TYPE role_name")
+    op.execute("DROP TYPE IF EXISTS role_name")
     op.drop_table("user")
     op.drop_table("tenant")
-    op.execute("DROP TYPE tenant_status")
+    op.execute("DROP TYPE IF EXISTS tenant_status")
