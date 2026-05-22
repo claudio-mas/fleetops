@@ -1,12 +1,14 @@
 import uuid
 from datetime import UTC, datetime, timedelta
 
+import jwt as pyjwt
 import pytest
 
+from app.core.config import settings
 from app.core.security import (
     create_access_token,
-    decode_access_token,
     create_refresh_token,
+    decode_access_token,
     hash_token,
 )
 
@@ -23,9 +25,6 @@ def test_create_and_decode_access_token() -> None:
 
 
 def test_decode_expired_token_raises() -> None:
-    import jwt as pyjwt
-    from app.core.config import settings
-
     payload = {
         "sub": str(uuid.uuid4()),
         "tenant_id": str(uuid.uuid4()),
