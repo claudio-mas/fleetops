@@ -8,6 +8,8 @@ from typing import Annotated
 import fastapi_users.schemas as fau_schemas
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
+from pwdlib import PasswordHash
+from pwdlib.hashers.argon2 import Argon2Hasher
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -22,6 +24,10 @@ from app.schemas.auth import RefreshRequest, TenantRegistrationRequest, TokenRes
 from app.services.user_manager import get_user_db, get_user_manager
 
 router = APIRouter(prefix="/auth", tags=["auth"])
+
+# Pre-computed dummy Argon2id hash — used in login to equalize timing when user doesn't exist,
+# preventing user-enumeration via response-time differences.
+_DUMMY_HASH: str = PasswordHash((Argon2Hasher(),)).hash("_timing_equalizer_")
 
 
 def _slugify(text: str) -> str:
@@ -103,16 +109,18 @@ async def login(
 
     async for user_db in get_user_db(session):
         async for user_manager in get_user_manager(user_db):
-            if user is None or not await user_manager.verify_password(
-                form_data.password, user.hashed_password
-            ):
+            # Always run verify_password to equalize timing (prevents user-enumeration oracle)
+            hash_to_check = user.hashed_password if user is not None else _DUMMY_HASH
+            password_ok = await user_manager.verify_password(form_data.password, hash_to_check)
+            if not password_ok or user is None:
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
                     detail="Credenciais inválidas",
                     headers={"WWW-Authenticate": "Bearer"},
                 )
 
-    assert user is not None
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Credenciais inválidas")
     if not user.is_active:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Usuário inativo")
 
