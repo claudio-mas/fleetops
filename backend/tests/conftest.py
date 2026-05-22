@@ -8,20 +8,21 @@ from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 os.environ.setdefault(
-    "DATABASE_URL", "postgresql+asyncpg://fleetops:fleetops@localhost:5433/fleetops_test"
+    "DATABASE_URL",
+    "postgresql+asyncpg://fleetops:fleetops_dev_password@localhost:5433/fleetops_test",
 )
 os.environ.setdefault("REDIS_URL", "redis://localhost:6379/1")
 os.environ.setdefault("SECRET_KEY", "test-secret-key-must-be-at-least-32-chars-long")
 os.environ.setdefault("ENVIRONMENT", "test")
+
+from uuid6 import uuid7  # noqa: E402
 
 from app.core.config import settings  # noqa: E402
 from app.core.security import create_access_token  # noqa: E402
 from app.models.base import Base  # noqa: E402
 from app.models.role import RoleName, UserRole  # noqa: E402
 from app.models.tenant import Tenant, TenantStatus  # noqa: E402
-from app.models.user import User  # noqa: E402
 from app.services.user_manager import get_user_db, get_user_manager  # noqa: E402
-from uuid6 import uuid7  # noqa: E402
 
 
 @pytest.fixture(scope="session")
