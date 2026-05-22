@@ -16,7 +16,11 @@ class Settings(BaseSettings):
 
     database_url: str = Field(..., min_length=1)
     redis_url: str = Field(..., min_length=1)
-    secret_key: str = Field(..., min_length=16)
+    secret_key: str = Field(..., min_length=32)
+
+    jwt_algorithm: str = "HS256"
+    jwt_access_token_expire_seconds: int = 900  # 15 minutos
+    jwt_refresh_token_expire_seconds: int = 604800  # 7 dias
 
 
 settings = Settings()

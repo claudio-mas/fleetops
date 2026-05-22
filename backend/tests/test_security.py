@@ -1,0 +1,50 @@
+import uuid
+from datetime import UTC, datetime, timedelta
+
+import pytest
+
+from app.core.security import (
+    create_access_token,
+    decode_access_token,
+    create_refresh_token,
+    hash_token,
+)
+
+
+def test_create_and_decode_access_token() -> None:
+    user_id = uuid.uuid4()
+    tenant_id = uuid.uuid4()
+    token = create_access_token(user_id, tenant_id)
+
+    payload = decode_access_token(token)
+    assert payload["sub"] == str(user_id)
+    assert payload["tenant_id"] == str(tenant_id)
+    assert payload["type"] == "access"
+
+
+def test_decode_expired_token_raises() -> None:
+    import jwt as pyjwt
+    from app.core.config import settings
+
+    payload = {
+        "sub": str(uuid.uuid4()),
+        "tenant_id": str(uuid.uuid4()),
+        "type": "access",
+        "exp": datetime.now(UTC) - timedelta(seconds=1),
+    }
+    token = pyjwt.encode(payload, settings.secret_key, algorithm=settings.jwt_algorithm)
+
+    with pytest.raises(pyjwt.ExpiredSignatureError):
+        decode_access_token(token)
+
+
+def test_hash_token_is_deterministic() -> None:
+    token = create_refresh_token()
+    assert hash_token(token) == hash_token(token)
+
+
+def test_hash_token_is_64_hex_chars() -> None:
+    token = create_refresh_token()
+    hashed = hash_token(token)
+    assert len(hashed) == 64
+    assert all(c in "0123456789abcdef" for c in hashed)
