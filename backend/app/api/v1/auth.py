@@ -109,9 +109,11 @@ async def login(
 
     async for user_db in get_user_db(session):
         async for user_manager in get_user_manager(user_db):
-            # Always run verify_password to equalize timing (prevents user-enumeration oracle)
+            # Always run verify to equalize timing (prevents user-enumeration oracle)
             hash_to_check = user.hashed_password if user is not None else _DUMMY_HASH
-            password_ok = await user_manager.verify_password(form_data.password, hash_to_check)
+            password_ok, _ = user_manager.password_helper.verify_and_update(
+                form_data.password, hash_to_check
+            )
             if not password_ok or user is None:
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
