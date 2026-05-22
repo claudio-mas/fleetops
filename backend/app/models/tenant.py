@@ -23,14 +23,14 @@ class TenantStatus(StrEnum):
 class Tenant(Base, TimestampMixin):
     __tablename__ = "tenant"
 
-    id: Mapped[uuid.UUID] = mapped_column(
-        PGUUID(as_uuid=True), primary_key=True, default=uuid7
-    )
+    id: Mapped[uuid.UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=uuid7)
     slug: Mapped[str] = mapped_column(String(100), unique=True, nullable=False, index=True)
     razao_social: Mapped[str] = mapped_column(String(255), nullable=False)
     cnpj: Mapped[str] = mapped_column(String(14), unique=True, nullable=False)
     status: Mapped[TenantStatus] = mapped_column(
-        Enum(TenantStatus, name="tenant_status"),
+        Enum(
+            TenantStatus, name="tenant_status", values_callable=lambda objs: [e.value for e in objs]
+        ),
         default=TenantStatus.TRIAL,
         nullable=False,
     )

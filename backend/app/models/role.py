@@ -22,23 +22,20 @@ class RoleName(StrEnum):
 class UserRole(Base):
     __tablename__ = "user_role"
 
-    id: Mapped[uuid.UUID] = mapped_column(
-        PGUUID(as_uuid=True), primary_key=True, default=uuid7
-    )
-    tenant_id: Mapped[uuid.UUID] = mapped_column(
-        PGUUID(as_uuid=True), nullable=False, index=True
-    )
+    id: Mapped[uuid.UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=uuid7)
+    tenant_id: Mapped[uuid.UUID] = mapped_column(PGUUID(as_uuid=True), nullable=False, index=True)
     user_id: Mapped[uuid.UUID] = mapped_column(
-        PGUUID(as_uuid=True), ForeignKey("user.id", ondelete="CASCADE"),
-        nullable=False, index=True,
+        PGUUID(as_uuid=True),
+        ForeignKey("user.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
     )
     role: Mapped[RoleName] = mapped_column(
-        Enum(RoleName, name="role_name"), nullable=False
+        Enum(RoleName, name="role_name", values_callable=lambda objs: [e.value for e in objs]),
+        nullable=False,
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
 
-    __table_args__ = (
-        UniqueConstraint("tenant_id", "user_id", "role", name="uq_user_role_tenant"),
-    )
+    __table_args__ = (UniqueConstraint("tenant_id", "user_id", "role", name="uq_user_role_tenant"),)
