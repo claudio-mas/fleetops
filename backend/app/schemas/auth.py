@@ -57,3 +57,36 @@ class UserRead(BaseModel):
     created_at: datetime
 
     model_config = {"from_attributes": True}
+
+
+class MFASetupRequest(BaseModel):
+    pass
+
+
+class MFASetupResponse(BaseModel):
+    secret: str
+    qr_code: str
+    message: str
+
+
+class MFAConfirmRequest(BaseModel):
+    secret: str
+    token: str
+
+
+class MFAConfirmResponse(BaseModel):
+    message: str
+
+
+class MFADisableRequest(BaseModel):
+    pass
+
+
+class MFALoginRequest(BaseModel):
+    token: str
+
+
+class MFALoginResponse(BaseModel):
+    access_token: str
+    refresh_token: str
+    token_type: str

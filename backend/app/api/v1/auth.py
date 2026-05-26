@@ -144,6 +144,9 @@ async def login(
     if not user.is_active:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Usuário inativo")
 
+    if user.mfa_enabled:
+        return {"mfa_required": True, "mfa_challenge_token": "TODO: implement JWT challenge"}  # type: ignore[return-value]
+
     access_token, refresh_raw, expires_at = _issue_tokens(user)
     user.refresh_token_hash = hash_token(refresh_raw)
     user.refresh_token_expires_at = expires_at
