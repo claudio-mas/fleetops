@@ -8,7 +8,117 @@
       "PowerShell(codegraph init -i c:\\\\Projeto\\\\Access 2>&1)",
       "Skill(superpowers:writing-plans)",
       "Skill(superpowers:writing-plans:*)",
-      "PowerShell(New-Item -ItemType Directory -Force -Path \"c:\\\\Projeto\\\\Access\\\\docs\\\\superpowers\\\\plans\")"
+      "PowerShell(New-Item -ItemType Directory -Force -Path \"c:\\\\Projeto\\\\Access\\\\docs\\\\superpowers\\\\plans\")",
+      "Read(//c/Users/Claudio/AppData/Local/npm-cache/_logs/**)",
+      "Bash(rtk ls *)",
+      "PowerShell(try { $r = Invoke-WebRequest -Uri 'http://localhost:18791/' -UseBasicParsing -TimeoutSec 5; Write-Output \"STATUS: $\\($r.StatusCode\\)\"; Write-Output \"CONTENT-TYPE: $\\($r.Headers['Content-Type']\\)\"; Write-Output \"--- BODY \\(primeiros 500 chars\\) ---\"; $r.Content.Substring\\(0, [Math]::Min\\(500, $r.Content.Length\\)\\) } catch { Write-Output \"ERRO: $\\($_.Exception.Message\\)\" })",
+      "PowerShell(try { $r = Invoke-WebRequest -Uri 'http://localhost:18791/cerebrum' -UseBasicParsing -TimeoutSec 5; Write-Output \"STATUS: $\\($r.StatusCode\\)\"; Write-Output \"CONTENT-TYPE: $\\($r.Headers['Content-Type']\\)\"; Write-Output \"--- BODY \\(primeiros 800 chars\\) ---\"; $r.Content.Substring\\(0, [Math]::Min\\(800, $r.Content.Length\\)\\) } catch { Write-Output \"ERRO: $\\($_.Exception.Message\\)\" })",
+      "PowerShell(try { $r = Invoke-WebRequest -Uri 'http://localhost:18791/api/cerebrum' -UseBasicParsing -TimeoutSec 5; Write-Output \"STATUS: $\\($r.StatusCode\\)\"; Write-Output \"CONTENT-TYPE: $\\($r.Headers['Content-Type']\\)\"; Write-Output \"--- BODY \\(primeiros 1500 chars\\) ---\"; $r.Content.Substring\\(0, [Math]::Min\\(1500, $r.Content.Length\\)\\) } catch { Write-Output \"ERRO: $\\($_.Exception.Message\\)\" })",
+      "PowerShell($endpoints = @\\('/api/cerebrum/data','/api/cerebrum/content','/api/files/cerebrum','/api/cerebrum.md','/api/wolf/cerebrum','/cerebrum.md','/.wolf/cerebrum.md','/api/file?path=.wolf/cerebrum.md','/api/read?path=.wolf/cerebrum.md','/api/wolf/files'\\); foreach \\($e in $endpoints\\) { try { $r = Invoke-WebRequest -Uri \"http://localhost:18791$e\" -UseBasicParsing -TimeoutSec 3; $ct = $r.Headers['Content-Type']; if \\($ct -notmatch 'html'\\) { Write-Output \"OK $e -> $\\($r.StatusCode\\) [$ct] $\\($r.Content.Length\\) bytes\" } else { Write-Output \"html $e -> $\\($r.StatusCode\\)\" } } catch { Write-Output \"ERR $e -> $\\($_.Exception.Message\\)\" } })",
+      "PowerShell(try { $r = Invoke-WebRequest -Uri 'http://localhost:18791/api/files' -UseBasicParsing -TimeoutSec 5; Write-Output \"STATUS: $\\($r.StatusCode\\) [$\\($r.Headers['Content-Type']\\)]\"; $r.Content.Substring\\(0, [Math]::Min\\(1500, $r.Content.Length\\)\\) } catch { Write-Output \"ERRO: $\\($_.Exception.Message\\)\" })",
+      "PowerShell(try { $r = Invoke-WebRequest -Uri 'http://localhost:18791/api/files' -UseBasicParsing -TimeoutSec 5; $j = $r.Content | ConvertFrom-Json; Write-Output \"Arquivos disponíveis:\"; $j.PSObject.Properties.Name | ForEach-Object { Write-Output \" - $_\" } } catch { Write-Output \"ERRO: $\\($_.Exception.Message\\)\" })",
+      "Read(//c/Users/Claudio/.claude/projects/c--Projeto-Access/memory/**)",
+      "PowerShell(Get-ChildItem c:\\\\Projeto\\\\Access\\\\ -Name | Where-Object { $_ -notin @\\('.claude', '.codegraph', '.venv', '.wolf', 'docs', 'vba_20260515_113714', 'vba_20260515_115707', 'vba_20260515_132158', 'vba_20260515_134006'\\) })",
+      "Bash(cd /mnt/c/Projeto/Access && rtk git add .gitignore .editorconfig && rtk git commit -m \"chore: add .gitignore and .editorconfig\")",
+      "Read(//mnt/c/Projeto/**)",
+      "PowerShell(uv --version)",
+      "PowerShell(Copy-Item \"c:\\\\Projeto\\\\Access\\\\.env.example\" \"c:\\\\Projeto\\\\Access\\\\.env\")",
+      "PowerShell(Get-Process -Id 20736 -ErrorAction SilentlyContinue)",
+      "PowerShell(Get-Process -Id 22116 -ErrorAction SilentlyContinue)",
+      "PowerShell(Get-WmiObject Win32_Process | Where-Object { $_.ProcessId -in @\\(20736, 22116\\) } | Select-Object ProcessId, Name, CommandLine)",
+      "PowerShell(docker compose -f \"c:\\\\Projeto\\\\Access\\\\docker-compose.yml\" ps)",
+      "PowerShell(docker compose -f \"c:\\\\Projeto\\\\Access\\\\docker-compose.yml\" exec postgres psql -U fleetops -d fleetops -c \"SELECT 1;\")",
+      "PowerShell(docker compose -f \"c:\\\\Projeto\\\\Access\\\\docker-compose.yml\" exec redis redis-cli ping)",
+      "PowerShell($env:DATABASE_URL=\"postgresql+asyncpg://fleetops:fleetops_dev_password@localhost:5433/fleetops\"; Set-Location \"c:\\\\Projeto\\\\Access\\\\backend\"; uv run alembic upgrade head 2>&1)",
+      "PowerShell($env:DATABASE_URL=\"postgresql+asyncpg://fleetops:fleetops_dev_password@localhost:5433/fleetops\"; $env:REDIS_URL=\"redis://localhost:6379/0\"; $env:SECRET_KEY=\"local-dev-secret-key-32-chars-ok\"; Set-Location \"c:\\\\Projeto\\\\Access\\\\backend\"; uv run alembic upgrade head 2>&1)",
+      "PowerShell(docker compose -f \"c:\\\\Projeto\\\\Access\\\\docker-compose.yml\" exec postgres psql -U fleetops -d fleetops -c \"SELECT version_num FROM alembic_version;\")",
+      "PowerShell(docker compose -f \"c:\\\\Projeto\\\\Access\\\\docker-compose.yml\" ps api)",
+      "PowerShell(Invoke-RestMethod -Uri \"http://localhost:8000/health\")",
+      "PowerShell(\\(Invoke-WebRequest -Uri \"http://localhost:8000/health\"\\).Content)",
+      "PowerShell(docker compose -f \"c:\\\\Projeto\\\\Access\\\\docker-compose.yml\" exec api alembic current 2>&1)",
+      "PowerShell(docker compose -f \"c:\\\\Projeto\\\\Access\\\\docker-compose.yml\" ps frontend)",
+      "PowerShell(Get-Volume C | Select-Object DriveLetter, SizeRemaining, @{N='FreeGB';E={[math]::Round\\($_.SizeRemaining/1GB,2\\)}})",
+      "PowerShell(wmic logicaldisk get size,freespace,caption)",
+      "PowerShell(npm cache clean --force 2>&1)",
+      "PowerShell($env:DATABASE_URL=\"postgresql+asyncpg://fleetops:fleetops_dev_password@localhost:5433/fleetops\"; $env:REDIS_URL=\"redis://localhost:6379/0\"; $env:SECRET_KEY=\"local-dev-secret-key-32-chars-ok\"; Set-Location \"c:\\\\Projeto\\\\Access\\\\backend\"; uv run pytest -v 2>&1 | Select-Object -Last 15)",
+      "PowerShell($env:DATABASE_URL=\"postgresql+asyncpg://fleetops:fleetops_dev_password@localhost:5433/fleetops\"; $env:REDIS_URL=\"redis://localhost:6379/0\"; $env:SECRET_KEY=\"local-dev-secret-key-32-chars-ok\"; Set-Location \"c:\\\\Projeto\\\\Access\\\\backend\"; uv run alembic upgrade head 2>&1 | Select-Object -Last 5)",
+      "PowerShell(\\(Invoke-WebRequest -Uri \"http://localhost:8000/health\"\\).Content; \\(Invoke-WebRequest -Uri \"http://localhost:8000/docs\"\\).StatusCode; \\(Invoke-WebRequest -Uri \"http://localhost:8080\"\\).StatusCode)",
+      "PowerShell($env:DATABASE_URL=\"postgresql+asyncpg://fleetops:fleetops_dev_password@localhost:5433/fleetops\"; $env:REDIS_URL=\"redis://localhost:6379/0\"; $env:SECRET_KEY=\"local-dev-secret-key-32-chars-ok\"; Set-Location \"c:\\\\Projeto\\\\Access\\\\backend\"; uv run ruff check . 2>&1 | Select-Object -Last 2; uv run ruff format --check . 2>&1 | Select-Object -Last 2; uv run mypy app 2>&1 | Select-Object -Last 2; uv run pytest -v 2>&1 | Select-Object -Last 5)",
+      "PowerShell(git -C \"c:\\\\Projeto\\\\Access\" tag -a p0-complete -m \"P0 - Foundation & Dev Environment complete\")",
+      "PowerShell($timestamp = Get-Date -Format \"HH:mm\"; Add-Content \"c:\\\\Projeto\\\\Access\\\\.wolf\\\\memory.md\" \"| $timestamp | P0 completo: 19 tasks, 19 commits — backend FastAPI + frontend React + Docker Compose rodando | backend/, frontend/, docker-compose.yml, Makefile, .github/workflows/ci.yml | sucesso | ~45000 |\")"
+    ],
+    "additionalDirectories": [
+      "c:\\Projeto\\Access"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.wolf/hooks/session-start.js\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Read",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.wolf/hooks/pre-read.js\"",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.wolf/hooks/pre-write.js\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Read",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.wolf/hooks/post-read.js\"",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.wolf/hooks/post-write.js\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.wolf/hooks/stop.js\"",
+            "timeout": 10
+          }
+        ]
+      }
     ]
   }
 }
