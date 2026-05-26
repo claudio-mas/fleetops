@@ -22,6 +22,7 @@ class Settings(BaseSettings):
     jwt_access_token_expire_seconds: int = 900  # 15 minutos
     jwt_refresh_token_expire_seconds: int = 604800  # 7 dias
 
+    FRONTEND_URL: str = Field(default="http://localhost:5173")
     RESEND_API_KEY: str = Field(default="")
     EMAILS_FROM: str = Field(default="noreply@fleetops.local")
     EMAILS_FROM_NAME: str = Field(default="FleetOps")

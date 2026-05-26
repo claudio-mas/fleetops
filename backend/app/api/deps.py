@@ -42,6 +42,10 @@ async def get_current_user(
 CurrentUser = Annotated[User, Depends(get_current_user)]
 
 
+async def get_current_tenant_id(user: CurrentUser) -> uuid.UUID:
+    return user.tenant_id
+
+
 async def get_tenant_session(
     user: CurrentUser,
     session: Annotated[AsyncSession, Depends(get_session)],

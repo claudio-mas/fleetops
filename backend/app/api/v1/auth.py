@@ -21,7 +21,9 @@ from app.models.role import RoleName, UserRole
 from app.models.tenant import Tenant, TenantStatus
 from app.models.user import User
 from app.schemas.auth import RefreshRequest, TenantRegistrationRequest, TokenResponse, UserRead
+from app.services.token_service import TokenService
 from app.services.user_manager import get_user_db, get_user_manager
+from app.tasks.email import send_email_verification
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -96,6 +98,20 @@ async def register_tenant(
     user.refresh_token_expires_at = expires_at
 
     await session.commit()
+
+    verification_token = await TokenService.create_email_verification_token(
+        session, user.id, tenant.id, user.email
+    )
+
+    verify_url_base = f"{settings.FRONTEND_URL}/verify-email"
+    send_email_verification.delay(
+        user_id=str(user.id),
+        tenant_id=str(tenant.id),
+        email=user.email,
+        token=verification_token,
+        verify_url_base=verify_url_base,
+    )
+
     return TokenResponse(access_token=access_token, refresh_token=refresh_raw)
 
 
