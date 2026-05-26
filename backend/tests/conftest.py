@@ -2,6 +2,7 @@ import os
 import uuid
 from collections.abc import AsyncGenerator
 from typing import Any
+from unittest.mock import MagicMock, patch
 
 import pytest
 from httpx import ASGITransport, AsyncClient
@@ -23,6 +24,14 @@ from app.models.base import Base  # noqa: E402
 from app.models.role import RoleName, UserRole  # noqa: E402
 from app.models.tenant import Tenant, TenantStatus  # noqa: E402
 from app.services.user_manager import get_user_db, get_user_manager  # noqa: E402
+
+
+@pytest.fixture(scope="session", autouse=True)
+def mock_celery_tasks() -> Any:
+    """Mock Celery tasks to prevent trying to connect to RabbitMQ."""
+    with patch("app.tasks.email.send_email_verification") as mock_send:
+        mock_send.delay = MagicMock(return_value=None)
+        yield mock_send
 
 
 @pytest.fixture(scope="session")
