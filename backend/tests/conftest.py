@@ -107,6 +107,23 @@ async def sample_user(db: AsyncSession, tenant: Tenant):  # type: ignore[no-unty
     return u
 
 
+@pytest.fixture(scope="function")
+async def dummy_role(db: AsyncSession):  # type: ignore[no-untyped-def]
+    """Create a dummy role record for user invitation FK constraint."""
+    from sqlalchemy.sql import text
+
+    role_id = uuid.uuid4()
+    await db.execute(
+        text(
+            "INSERT INTO role (id) VALUES (:id) "
+            "ON CONFLICT (id) DO NOTHING"
+        ),
+        {"id": str(role_id)},
+    )
+    await db.commit()
+    return role_id
+
+
 @pytest.fixture
 async def user_with_token(  # type: ignore[no-untyped-def]
     db: AsyncSession, tenant: Tenant

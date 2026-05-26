@@ -109,16 +109,16 @@ def upgrade() -> None:
             nullable=True,
         ),
         sa.Column(
-            "role_id",
-            postgresql.UUID(as_uuid=True),
-            sa.ForeignKey("role.id", ondelete="RESTRICT"),
+            "role_name",
+            sa.Enum("owner", "admin", "gestor", "operador", "mecanico", "leitura",
+                    name="role_name", create_type=False),
             nullable=False,
         ),
         sa.UniqueConstraint("token_hash", name="uq_user_invitation_token_hash"),
     )
     op.create_index("ix_user_invitation_tenant_id", "user_invitation", ["tenant_id"])
     op.create_index("ix_user_invitation_invited_by_id", "user_invitation", ["invited_by_id"])
-    op.create_index("ix_user_invitation_role_id", "user_invitation", ["role_id"])
+    op.create_index("ix_user_invitation_role_name", "user_invitation", ["role_name"])
 
     # ── RLS on user_invitation ──────────────────────────────────────────────
     op.execute("ALTER TABLE user_invitation ENABLE ROW LEVEL SECURITY")

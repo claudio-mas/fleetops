@@ -7,7 +7,9 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.email_verification import EmailVerificationToken
+from app.models.role import RoleName
 from app.models.user import User
+from app.models.user_invitation import InvitationStatus, UserInvitation
 
 
 class TokenService:
@@ -105,6 +107,79 @@ class TokenService:
             return False
 
         user.email_verified_at = datetime.now(UTC)
+
+        await session.commit()
+        return True
+
+    @staticmethod
+    async def create_user_invitation(
+        session: AsyncSession,
+        tenant_id: UUID,
+        invited_by_id: UUID,
+        email: str,
+        role_name: RoleName,
+        expires_in_days: int = 7,
+    ) -> str:
+        """Create user invitation and return the raw token (not hashed)."""
+        token = TokenService.generate_token()
+        token_hash = TokenService.generate_token_hash(token)
+
+        expires_at = datetime.now(UTC) + timedelta(days=expires_in_days)
+
+        invitation = UserInvitation(
+            tenant_id=tenant_id,
+            invited_by_id=invited_by_id,
+            email=email,
+            token_hash=token_hash,
+            expires_at=expires_at,
+            role_name=role_name,
+            status=InvitationStatus.PENDING,
+        )
+        session.add(invitation)
+        await session.flush()
+
+        return token
+
+    @staticmethod
+    async def get_invitation_by_token(
+        session: AsyncSession,
+        token: str,
+    ) -> UserInvitation | None:
+        """Get invitation by token, validating expiration. Returns None if expired/invalid."""
+        token_hash = TokenService.generate_token_hash(token)
+
+        result = await session.execute(
+            select(UserInvitation).where(
+                UserInvitation.token_hash == token_hash,
+                UserInvitation.status == InvitationStatus.PENDING,
+            )
+        )
+        invitation = result.scalars().first()
+
+        if not invitation:
+            return None
+
+        if invitation.expires_at < datetime.now(UTC):
+            invitation.status = InvitationStatus.EXPIRED
+            await session.commit()
+            return None
+
+        return invitation
+
+    @staticmethod
+    async def accept_invitation(
+        session: AsyncSession,
+        token: str,
+        accepted_user_id: UUID,
+    ) -> bool:
+        """Mark invitation as accepted and link to user."""
+        invitation = await TokenService.get_invitation_by_token(session, token)
+        if not invitation:
+            return False
+
+        invitation.status = InvitationStatus.ACCEPTED
+        invitation.accepted_user_id = accepted_user_id
+        invitation.accepted_at = datetime.now(UTC)
 
         await session.commit()
         return True
