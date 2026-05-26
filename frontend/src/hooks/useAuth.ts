@@ -4,6 +4,7 @@ import { api } from "@/lib/api";
 import { useAuthStore } from "@/stores/auth";
 import type {
   LoginRequest,
+  MFALoginResponse,
   TenantRegistrationRequest,
   TokenResponse,
   UserRead,
@@ -24,21 +25,25 @@ export function useLogin() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  return useMutation({
+  return useMutation<MFALoginResponse, Error, LoginRequest>({
     mutationFn: (data: LoginRequest) => {
       const form = new URLSearchParams();
       form.append("username", data.username);
       form.append("password", data.password);
       return api
-        .post<TokenResponse>("/v1/auth/login", form, {
+        .post<MFALoginResponse>("/v1/auth/login", form, {
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
         })
         .then((r) => r.data);
     },
-    onSuccess: (tokens) => {
-      setTokens(tokens.access_token, tokens.refresh_token);
-      queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
-      navigate("/dashboard");
+    onSuccess: (response) => {
+      // Only navigate and set tokens if MFA is not required
+      if (!response.mfa_required && response.access_token && response.refresh_token) {
+        setTokens(response.access_token, response.refresh_token);
+        queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
+        navigate("/dashboard");
+      }
+      // If MFA is required, the component will handle showing the MFA form
     },
   });
 }

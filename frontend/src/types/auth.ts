@@ -1,7 +1,15 @@
 export interface TokenResponse {
   access_token: string;
   refresh_token: string;
-  token_type: string;
+  token_type?: string;
+}
+
+export interface MFALoginResponse {
+  mfa_required?: boolean;
+  mfa_challenge_token?: string;
+  access_token?: string;
+  refresh_token?: string;
+  token_type?: string;
 }
 
 export interface UserRead {

@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useLogin } from "@/hooks/useAuth";
+import { MFALoginForm } from "./MFALoginForm";
 
 const schema = z.object({
   username: z.string().email("E-mail inválido"),
@@ -11,7 +13,9 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 export function LoginForm() {
-  const { mutate: login, isPending, error } = useLogin();
+  const { mutate: login, isPending, error, data } = useLogin();
+  const [mfaRequired, setMfaRequired] = useState(false);
+  const [mfaChallengeToken, setMfaChallengeToken] = useState<string | null>(null);
 
   const {
     register,
@@ -19,8 +23,23 @@ export function LoginForm() {
     formState: { errors },
   } = useForm<FormData>({ resolver: zodResolver(schema) });
 
+  // Check if MFA was required in response
+  if (data?.mfa_required && data?.mfa_challenge_token && !mfaRequired) {
+    setMfaRequired(true);
+    setMfaChallengeToken(data.mfa_challenge_token);
+  }
+
+  if (mfaRequired && mfaChallengeToken) {
+    return <MFALoginForm challengeToken={mfaChallengeToken} />;
+  }
+
+  const apiError = error as { response?: { data?: { detail?: string } } };
+  const errorMessage =
+    apiError?.response?.data?.detail ||
+    "Credenciais inválidas. Verifique e-mail e senha.";
+
   return (
-    <form onSubmit={handleSubmit((data) => login(data))} className="space-y-4">
+    <form onSubmit={handleSubmit((formData) => login(formData))} className="space-y-4">
       <div>
         <label htmlFor="username" className="block text-sm font-medium text-gray-700">
           E-mail
@@ -55,7 +74,7 @@ export function LoginForm() {
 
       {error && (
         <p className="text-sm text-red-600">
-          Credenciais inválidas. Verifique e-mail e senha.
+          {errorMessage}
         </p>
       )}
 
