@@ -37,6 +37,8 @@ async def db_engine():  # type: ignore[no-untyped-def]
         await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
     yield eng
+    async with eng.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
     await eng.dispose()
 
 
