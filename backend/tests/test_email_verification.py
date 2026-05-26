@@ -1,7 +1,7 @@
-import pytest
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from uuid import uuid4
 
+import pytest
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -110,7 +110,7 @@ async def test_verify_email_token_expired(
         )
     )
     verification_token = result.scalars().first()
-    verification_token.expires_at = datetime.now(timezone.utc) - timedelta(hours=1)
+    verification_token.expires_at = datetime.now(UTC) - timedelta(hours=1)
     await db.commit()
 
     result = await TokenService.verify_email_token(db, token, tenant.id)
@@ -134,7 +134,7 @@ async def test_verify_email_token_already_confirmed(
         )
     )
     verification_token = result.scalars().first()
-    verification_token.confirmed_at = datetime.now(timezone.utc)
+    verification_token.confirmed_at = datetime.now(UTC)
     await db.commit()
 
     result = await TokenService.verify_email_token(db, token, tenant.id)
@@ -215,7 +215,7 @@ async def test_confirm_email_token_expired_token(
         )
     )
     verification_token = result.scalars().first()
-    verification_token.expires_at = datetime.now(timezone.utc) - timedelta(hours=1)
+    verification_token.expires_at = datetime.now(UTC) - timedelta(hours=1)
     await db.commit()
 
     success = await TokenService.confirm_email_token(db, token, tenant.id)
@@ -239,7 +239,7 @@ async def test_confirm_email_token_already_confirmed(
         )
     )
     verification_token = result.scalars().first()
-    verification_token.confirmed_at = datetime.now(timezone.utc)
+    verification_token.confirmed_at = datetime.now(UTC)
     await db.commit()
 
     success = await TokenService.confirm_email_token(db, token, tenant.id)

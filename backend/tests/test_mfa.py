@@ -1,4 +1,3 @@
-import pytest
 import pyotp
 
 from app.services.mfa_service import MFAService

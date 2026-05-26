@@ -1,9 +1,10 @@
-import pytest
 from uuid import uuid4
+
+import pytest
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.user import User
 from app.services.mfa_service import MFAService
-from sqlalchemy.ext.asyncio import AsyncSession
 
 pytestmark = pytest.mark.asyncio
 
