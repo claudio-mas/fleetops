@@ -52,7 +52,7 @@ export function useRegisterTenant() {
       api.post<TokenResponse>("/v1/auth/register", data).then((r) => r.data),
     onSuccess: (tokens) => {
       setTokens(tokens.access_token, tokens.refresh_token);
-      navigate("/dashboard");
+      navigate("/verify-email");
     },
   });
 }
