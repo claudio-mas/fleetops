@@ -149,9 +149,34 @@ Makefile
 
 ## Documentos
 
-- [PRD — Migração Access → SaaS](docs/superpowers/specs/2026-05-15-migracao-access-saas-design.md)
-- [Plano P0 — Foundation & Dev Environment](docs/superpowers/plans/2026-05-15-p0-foundation-dev-environment.md)
+### Especificações
+- [PRD Completo — Migração Access → SaaS](docs/superpowers/specs/2026-05-15-migracao-access-saas-design.md)
+
+### Planos de Implementação
+- [P0 — Foundation & Dev Environment](docs/superpowers/plans/2026-05-15-p0-foundation-dev-environment.md) ✅ **Concluído**
+- [P1 — Multi-tenant Auth & RBAC](docs/superpowers/plans/2026-05-22-p1-multitenant-auth-rbac.md) ✅ **Concluído**
+- [P2 — Email Verification, User Invitation & MFA](docs/superpowers/plans/2026-05-26-p2-email-verification-user-invitation-mfa.md) ✅ **Concluído**
+
+### Guias Técnicos
+- [P2 Comprehensive Guide — Arquitetura, API, Security](docs/superpowers/P2_EMAIL_MFA.md)
+- [Backend README — Setup, Testing, Deployment](backend/README.md)
 
 ## Próximos passos
 
-Próximo plano de implementação: **P1 — Multi-tenant Auth & RBAC** (a ser escrito após conclusão do P0).
+### Status Atual
+- ✅ **P0** — Foundation & Dev Environment (concluído)
+- ✅ **P1** — Multi-tenant Auth & RBAC (concluído — 31 testes backend + 3 frontend)
+- ✅ **P2** — Email Verification, User Invitation & MFA (concluído — 65 testes, 3,500+ linhas de código)
+
+### P3 Planejado
+**Próximas fases** (não iniciadas):
+
+1. **MFA Improvements** — Backup codes, SMS OTP, WebAuthn/FIDO2
+2. **SSO Integration** — Google, Microsoft, GitHub OAuth
+3. **Email Templates** — Customização por tenant, branding
+4. **Webhook Delivery** — Rastreamento de status de envio via Resend
+5. **Bulk User Import** — CSV upload com fluxo de invitação automática
+6. **Advanced RBAC** — Permissões customizáveis por tenant
+7. **Audit Trail** — Log imutável de todas as ações
+
+Ver [PRD](docs/superpowers/specs/2026-05-15-migracao-access-saas-design.md) para roadmap completo e priorização.
