@@ -63,12 +63,12 @@ async def client(db_engine) -> AsyncGenerator[AsyncClient, None]:  # type: ignor
     app.dependency_overrides.clear()
 
 
-@pytest.fixture
+@pytest.fixture(scope="function")
 async def tenant(db: AsyncSession) -> Tenant:
     from datetime import UTC, datetime, timedelta
 
     t = Tenant(
-        slug=f"tenant-{uuid7().hex[:8]}",
+        slug=f"tenant-{uuid7().hex[:16]}",
         razao_social="Empresa Teste Ltda",
         cnpj=f"{uuid7().int % 10**14:014d}",
         status=TenantStatus.TRIAL,
@@ -78,6 +78,33 @@ async def tenant(db: AsyncSession) -> Tenant:
     await db.commit()
     await db.refresh(t)
     return t
+
+
+@pytest.fixture(scope="function")
+async def sample_user(db: AsyncSession, tenant: Tenant):  # type: ignore[no-untyped-def]
+    import fastapi_users.schemas as fau_schemas
+
+    class _UC(fau_schemas.BaseUserCreate):
+        tenant_id: uuid.UUID
+        full_name: str
+
+    async for user_db_inst in get_user_db(db):
+        async for mgr in get_user_manager(user_db_inst):
+            u = await mgr.create(
+                _UC(
+                    email=f"user-{uuid7().hex[:16]}@test.com",
+                    password="SenhaForte123!",
+                    tenant_id=tenant.id,
+                    full_name="Sample User",
+                )
+            )
+
+    role = UserRole(tenant_id=tenant.id, user_id=u.id, role=RoleName.ADMIN)
+    db.add(role)
+    await db.commit()
+    await db.refresh(u)
+
+    return u
 
 
 @pytest.fixture
