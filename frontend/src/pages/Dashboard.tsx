@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { useCurrentUser, useLogout } from "@/hooks/useAuth";
 
 export function Dashboard() {
@@ -16,9 +17,20 @@ export function Dashboard() {
         </button>
       </div>
       {user && (
-        <p className="mt-4 text-gray-600">
-          Bem-vindo, <strong>{user.full_name}</strong>!
-        </p>
+        <div className="mt-4 space-y-4">
+          <p className="text-gray-600">
+            Bem-vindo, <strong>{user.full_name}</strong>!
+          </p>
+          <div className="pt-4 border-t border-gray-200">
+            <h2 className="text-lg font-semibold text-gray-900 mb-3">Configurações de Segurança</h2>
+            <Link
+              to="/mfa-setup"
+              className="inline-block rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500"
+            >
+              Autenticação de Dois Fatores
+            </Link>
+          </div>
+        </div>
       )}
     </div>
   );
