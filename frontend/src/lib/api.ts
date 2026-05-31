@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { type AxiosError } from "axios";
 
 export const api = axios.create({
   baseURL: "/api",
@@ -13,14 +13,19 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-api.interceptors.response.use(
-  (res) => res,
-  (err) => {
-    if (err.response?.status === 401) {
-      localStorage.removeItem("access_token");
-      localStorage.removeItem("refresh_token");
-      window.location.href = "/login";
-    }
-    return Promise.reject(err);
+// Endpoints onde um 401 é uma falha de credencial/TOTP esperada, tratada inline
+// pelo componente — NÃO deslogar nem redirecionar para /login nesses casos.
+const AUTH_ATTEMPT_PATHS = ["/auth/login", "/mfa/login"];
+
+export function handleResponseError(err: AxiosError): Promise<never> {
+  const url = err.config?.url ?? "";
+  const isAuthAttempt = AUTH_ATTEMPT_PATHS.some((path) => url.includes(path));
+  if (err.response?.status === 401 && !isAuthAttempt) {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    window.location.href = "/login";
   }
-);
+  return Promise.reject(err);
+}
+
+api.interceptors.response.use((res) => res, handleResponseError);

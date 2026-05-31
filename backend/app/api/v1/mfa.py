@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import uuid
-from datetime import UTC, datetime, timedelta
 from typing import Annotated
 
 import jwt as pyjwt
@@ -9,13 +8,11 @@ from fastapi import APIRouter, Depends, Header, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user
-from app.core.config import settings
 from app.core.database import get_session
 from app.core.security import (
-    create_access_token,
-    create_refresh_token,
     decode_mfa_challenge_token,
     hash_token,
+    issue_login_tokens,
 )
 from app.models.user import User
 from app.schemas.auth import (
@@ -129,12 +126,9 @@ async def mfa_login(
     if user is None or not user.is_active:
         raise credentials_exc
 
-    access_token = create_access_token(user.id, user.tenant_id)
-    refresh_raw = create_refresh_token()
+    access_token, refresh_raw, expires_at = issue_login_tokens(user.id, user.tenant_id)
     user.refresh_token_hash = hash_token(refresh_raw)
-    user.refresh_token_expires_at = datetime.now(UTC) + timedelta(
-        seconds=settings.jwt_refresh_token_expire_seconds
-    )
+    user.refresh_token_expires_at = expires_at
     await session.commit()
 
     return MFALoginResponse(access_token=access_token, refresh_token=refresh_raw)

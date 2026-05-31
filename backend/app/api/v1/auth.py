@@ -17,10 +17,9 @@ from app.api.deps import CurrentUser, require_role
 from app.core.config import settings
 from app.core.database import get_session
 from app.core.security import (
-    create_access_token,
     create_mfa_challenge_token,
-    create_refresh_token,
     hash_token,
+    issue_login_tokens,
 )
 from app.models.role import RoleName, UserRole
 from app.models.tenant import Tenant, TenantStatus
@@ -50,10 +49,7 @@ def _slugify(text: str) -> str:
 
 
 def _issue_tokens(user: User) -> tuple[str, str, datetime]:
-    access_token = create_access_token(user.id, user.tenant_id)
-    refresh_raw = create_refresh_token()
-    expires_at = datetime.now(UTC) + timedelta(seconds=settings.jwt_refresh_token_expire_seconds)
-    return access_token, refresh_raw, expires_at
+    return issue_login_tokens(user.id, user.tenant_id)
 
 
 class _UserCreate(fau_schemas.BaseUserCreate):

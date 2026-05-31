@@ -1,4 +1,6 @@
 import base64
+import hmac
+import time
 from io import BytesIO
 from uuid import UUID
 
@@ -23,9 +25,7 @@ class MFAService:
         return pyotp.TOTP(secret)
 
     @staticmethod
-    def get_provisioning_uri(
-        secret: str, email: str, issuer: str = "FleetOps"
-    ) -> str:
+    def get_provisioning_uri(secret: str, email: str, issuer: str = "FleetOps") -> str:
         """Generate provisioning URI for QR code."""
         totp = MFAService.get_totp(secret)
         return totp.provisioning_uri(name=email, issuer_name=issuer)
@@ -52,6 +52,27 @@ class MFAService:
             return totp.verify(token, valid_window=window)
         except Exception:
             return False
+
+    @staticmethod
+    def find_matching_timestep(
+        secret: str, token: str, window: int = 1, for_time: int | None = None
+    ) -> int | None:
+        """Return the TOTP timestep matching ``token`` within ±window, else None.
+
+        Unlike :meth:`verify_token` this identifies *which* period matched, so
+        the caller can persist it and reject replays of the same code.
+        """
+        totp = MFAService.get_totp(secret)
+        if for_time is None:
+            for_time = int(time.time())
+        for offset in range(-window, window + 1):
+            t = for_time + offset * totp.interval
+            try:
+                if hmac.compare_digest(totp.at(t), str(token)):
+                    return t // totp.interval
+            except Exception:
+                return None
+        return None
 
     @staticmethod
     async def setup_mfa(
@@ -97,12 +118,20 @@ class MFAService:
         user_id: UUID,
         token: str,
     ) -> bool:
-        """Validate MFA token during login."""
+        """Validate MFA token during login, rejecting replays of a used code."""
         user = await session.get(User, user_id)
         if not user or not user.mfa_enabled or not user.mfa_secret:
             return False
 
-        return MFAService.verify_token(user.mfa_secret, token)
+        timestep = MFAService.find_matching_timestep(user.mfa_secret, token)
+        if timestep is None:
+            return False
+        if user.mfa_last_used_timestep is not None and timestep <= user.mfa_last_used_timestep:
+            return False
+
+        user.mfa_last_used_timestep = timestep
+        await session.commit()
+        return True
 
     @staticmethod
     async def disable_mfa(

@@ -21,12 +21,15 @@ def create_access_token(user_id: uuid.UUID, tenant_id: uuid.UUID) -> str:
 
 
 def decode_access_token(token: str) -> dict[str, object]:
-    return pyjwt.decode(
+    payload = pyjwt.decode(
         token,
         settings.secret_key,
         algorithms=[settings.jwt_algorithm],
         options={"verify_exp": True},
     )
+    if payload.get("type") != "access":
+        raise pyjwt.InvalidTokenError("not an access token")
+    return payload
 
 
 def create_mfa_challenge_token(user_id: uuid.UUID, tenant_id: uuid.UUID) -> str:
@@ -54,6 +57,14 @@ def decode_mfa_challenge_token(token: str) -> dict[str, object]:
 
 def create_refresh_token() -> str:
     return str(uuid.uuid4())
+
+
+def issue_login_tokens(user_id: uuid.UUID, tenant_id: uuid.UUID) -> tuple[str, str, datetime]:
+    """Mint a fresh (access_token, refresh_token_raw, refresh_expires_at) triple."""
+    access_token = create_access_token(user_id, tenant_id)
+    refresh_raw = create_refresh_token()
+    expires_at = datetime.now(UTC) + timedelta(seconds=settings.jwt_refresh_token_expire_seconds)
+    return access_token, refresh_raw, expires_at
 
 
 def hash_token(token: str) -> str:

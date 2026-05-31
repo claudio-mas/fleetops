@@ -103,6 +103,54 @@ async def test_mfa_login_rejects_invalid_challenge_token(
     assert resp.status_code == 401
 
 
+async def test_challenge_token_cannot_access_protected_route(
+    client: AsyncClient, db: AsyncSession, sample_user
+) -> None:
+    """The challenge token issued at /login must not authenticate protected routes."""
+    await _enable_mfa(db, sample_user.id)
+
+    login = await client.post(
+        "/api/v1/auth/login",
+        data={"username": sample_user.email, "password": "SenhaForte123!"},
+    )
+    challenge = login.json()["mfa_challenge_token"]
+
+    resp = await client.get(
+        "/api/v1/auth/me",
+        headers={"Authorization": f"Bearer {challenge}"},
+    )
+
+    assert resp.status_code == 401
+
+
+async def test_mfa_login_rejects_replayed_totp(
+    client: AsyncClient, db: AsyncSession, sample_user
+) -> None:
+    """A TOTP code already used to complete an MFA login cannot be replayed."""
+    secret = await _enable_mfa(db, sample_user.id)
+
+    login = await client.post(
+        "/api/v1/auth/login",
+        data={"username": sample_user.email, "password": "SenhaForte123!"},
+    )
+    challenge = login.json()["mfa_challenge_token"]
+
+    code = MFAService.get_totp(secret).now()
+    first = await client.post(
+        "/api/v1/mfa/login",
+        json={"token": code},
+        headers={"X-MFA-Challenge": challenge},
+    )
+    assert first.status_code == 200, first.text
+
+    replay = await client.post(
+        "/api/v1/mfa/login",
+        json={"token": code},
+        headers={"X-MFA-Challenge": challenge},
+    )
+    assert replay.status_code == 401
+
+
 async def test_login_without_mfa_still_returns_tokens(client: AsyncClient) -> None:
     await client.post(
         "/api/v1/auth/register",

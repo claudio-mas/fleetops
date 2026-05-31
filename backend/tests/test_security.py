@@ -7,6 +7,7 @@ import pytest
 from app.core.config import settings
 from app.core.security import (
     create_access_token,
+    create_mfa_challenge_token,
     create_refresh_token,
     decode_access_token,
     hash_token,
@@ -35,6 +36,14 @@ def test_decode_expired_token_raises() -> None:
 
     with pytest.raises(pyjwt.ExpiredSignatureError):
         decode_access_token(token)
+
+
+def test_decode_access_token_rejects_mfa_challenge_token() -> None:
+    """An MFA challenge token must NOT be usable as an access token."""
+    challenge = create_mfa_challenge_token(uuid.uuid4(), uuid.uuid4())
+
+    with pytest.raises(pyjwt.InvalidTokenError):
+        decode_access_token(challenge)
 
 
 def test_hash_token_is_deterministic() -> None:
