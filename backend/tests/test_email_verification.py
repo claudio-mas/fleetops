@@ -43,9 +43,7 @@ async def test_token_hash_is_64_chars() -> None:
     assert all(c in "0123456789abcdef" for c in token_hash)
 
 
-async def test_create_and_verify_email_token(
-    db: AsyncSession, sample_user
-) -> None:
+async def test_create_and_verify_email_token(db: AsyncSession, sample_user) -> None:
     """Test creating and verifying email token."""
     email = "user@example.com"
 
@@ -62,9 +60,7 @@ async def test_verify_email_token_returns_user_and_email(
     """Test verifying token returns correct user_id and email."""
     email = "test-verify@example.com"
 
-    token = await TokenService.create_email_verification_token(
-        db, sample_user.id, tenant.id, email
-    )
+    token = await TokenService.create_email_verification_token(db, sample_user.id, tenant.id, email)
 
     result = await TokenService.verify_email_token(db, token, tenant.id)
     assert result is not None
@@ -79,13 +75,14 @@ async def test_verify_email_token_invalid_token(db: AsyncSession, tenant) -> Non
     assert result is None
 
 
-async def test_verify_email_token_wrong_tenant(
-    db: AsyncSession, sample_user: User, tenant
-) -> None:
+async def test_verify_email_token_wrong_tenant(db: AsyncSession, sample_user: User, tenant) -> None:
     """Test verifying token with wrong tenant_id returns None."""
     email = "test@example.com"
     token = await TokenService.create_email_verification_token(
-        db, sample_user.id, tenant.id, email,
+        db,
+        sample_user.id,
+        tenant.id,
+        email,
     )
 
     wrong_tenant_id = uuid4()
@@ -93,21 +90,20 @@ async def test_verify_email_token_wrong_tenant(
     assert result is None
 
 
-async def test_verify_email_token_expired(
-    db: AsyncSession, sample_user: User, tenant
-) -> None:
+async def test_verify_email_token_expired(db: AsyncSession, sample_user: User, tenant) -> None:
     """Test verifying expired token returns None."""
     email = "test-expired@example.com"
 
     token = await TokenService.create_email_verification_token(
-        db, sample_user.id, tenant.id, email,
+        db,
+        sample_user.id,
+        tenant.id,
+        email,
     )
 
     token_hash = TokenService.generate_token_hash(token)
     result = await db.execute(
-        select(EmailVerificationToken).where(
-            EmailVerificationToken.token_hash == token_hash
-        )
+        select(EmailVerificationToken).where(EmailVerificationToken.token_hash == token_hash)
     )
     verification_token = result.scalars().first()
     verification_token.expires_at = datetime.now(UTC) - timedelta(hours=1)
@@ -123,15 +119,11 @@ async def test_verify_email_token_already_confirmed(
     """Test verifying already confirmed token returns None."""
     email = "test-confirmed@example.com"
 
-    token = await TokenService.create_email_verification_token(
-        db, sample_user.id, tenant.id, email
-    )
+    token = await TokenService.create_email_verification_token(db, sample_user.id, tenant.id, email)
 
     token_hash = TokenService.generate_token_hash(token)
     result = await db.execute(
-        select(EmailVerificationToken).where(
-            EmailVerificationToken.token_hash == token_hash
-        )
+        select(EmailVerificationToken).where(EmailVerificationToken.token_hash == token_hash)
     )
     verification_token = result.scalars().first()
     verification_token.confirmed_at = datetime.now(UTC)
@@ -141,9 +133,7 @@ async def test_verify_email_token_already_confirmed(
     assert result is None
 
 
-async def test_confirm_email_token_success(
-    db: AsyncSession, sample_user: User, tenant
-) -> None:
+async def test_confirm_email_token_success(db: AsyncSession, sample_user: User, tenant) -> None:
     """Test confirming email token updates user.email_verified_at."""
     token = await TokenService.create_email_verification_token(
         db, sample_user.id, tenant.id, sample_user.email
@@ -165,14 +155,15 @@ async def test_confirm_email_token_sets_confirmed_at(
 ) -> None:
     """Test confirming email token marks it as confirmed."""
     token = await TokenService.create_email_verification_token(
-        db, sample_user.id, tenant.id, sample_user.email,
+        db,
+        sample_user.id,
+        tenant.id,
+        sample_user.email,
     )
 
     token_hash = TokenService.generate_token_hash(token)
     result = await db.execute(
-        select(EmailVerificationToken).where(
-            EmailVerificationToken.token_hash == token_hash
-        )
+        select(EmailVerificationToken).where(EmailVerificationToken.token_hash == token_hash)
     )
     verification_token_before = result.scalars().first()
     assert verification_token_before.confirmed_at is None
@@ -180,9 +171,7 @@ async def test_confirm_email_token_sets_confirmed_at(
     await TokenService.confirm_email_token(db, token, tenant.id)
 
     result = await db.execute(
-        select(EmailVerificationToken).where(
-            EmailVerificationToken.token_hash == token_hash
-        )
+        select(EmailVerificationToken).where(EmailVerificationToken.token_hash == token_hash)
     )
     verification_token_after = result.scalars().first()
     assert verification_token_after.confirmed_at is not None
@@ -193,7 +182,9 @@ async def test_confirm_email_token_invalid_token(
 ) -> None:
     """Test confirming invalid token returns False."""
     success = await TokenService.confirm_email_token(
-        db, "invalid_token", tenant.id,
+        db,
+        "invalid_token",
+        tenant.id,
     )
     assert success is False
 
@@ -210,9 +201,7 @@ async def test_confirm_email_token_expired_token(
 
     token_hash = TokenService.generate_token_hash(token)
     result = await db.execute(
-        select(EmailVerificationToken).where(
-            EmailVerificationToken.token_hash == token_hash
-        )
+        select(EmailVerificationToken).where(EmailVerificationToken.token_hash == token_hash)
     )
     verification_token = result.scalars().first()
     verification_token.expires_at = datetime.now(UTC) - timedelta(hours=1)
@@ -228,15 +217,11 @@ async def test_confirm_email_token_already_confirmed(
     """Test confirming already confirmed token returns False."""
     email = "test-already-confirmed@example.com"
 
-    token = await TokenService.create_email_verification_token(
-        db, sample_user.id, tenant.id, email
-    )
+    token = await TokenService.create_email_verification_token(db, sample_user.id, tenant.id, email)
 
     token_hash = TokenService.generate_token_hash(token)
     result = await db.execute(
-        select(EmailVerificationToken).where(
-            EmailVerificationToken.token_hash == token_hash
-        )
+        select(EmailVerificationToken).where(EmailVerificationToken.token_hash == token_hash)
     )
     verification_token = result.scalars().first()
     verification_token.confirmed_at = datetime.now(UTC)
@@ -262,10 +247,16 @@ async def test_create_multiple_tokens_for_same_user(
 ) -> None:
     """Test creating multiple tokens for the same user."""
     token1 = await TokenService.create_email_verification_token(
-        db, sample_user.id, tenant.id, "email1@example.com",
+        db,
+        sample_user.id,
+        tenant.id,
+        "email1@example.com",
     )
     token2 = await TokenService.create_email_verification_token(
-        db, sample_user.id, tenant.id, "email2@example.com",
+        db,
+        sample_user.id,
+        tenant.id,
+        "email2@example.com",
     )
 
     assert token1 != token2
@@ -300,7 +291,10 @@ async def test_confirm_email_token_different_tenant(
 ) -> None:
     """Test confirming token with wrong tenant_id returns False."""
     token = await TokenService.create_email_verification_token(
-        db, sample_user.id, tenant.id, sample_user.email,
+        db,
+        sample_user.id,
+        tenant.id,
+        sample_user.email,
     )
 
     wrong_tenant_id = uuid4()

@@ -35,9 +35,7 @@ async def verify_email(
     tenant_id: Annotated[UUID, Depends(get_current_tenant_id)],
 ) -> VerifyEmailResponse:
     """Confirm email verification token."""
-    success = await TokenService.confirm_email_token(
-        session, req.token, tenant_id
-    )
+    success = await TokenService.confirm_email_token(session, req.token, tenant_id)
     if not success:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

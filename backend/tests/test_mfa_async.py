@@ -43,9 +43,7 @@ async def test_confirm_mfa_invalid_token(db: AsyncSession, sample_user):
     """Test confirming MFA with invalid token."""
     secret, _ = await MFAService.setup_mfa(db, sample_user.id)
 
-    success = await MFAService.confirm_mfa(
-        db, sample_user.id, secret, "000000"
-    )
+    success = await MFAService.confirm_mfa(db, sample_user.id, secret, "000000")
     assert not success
 
 
