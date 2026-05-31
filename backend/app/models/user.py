@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime
 
 from fastapi_users.db import SQLAlchemyBaseUserTableUUID
-from sqlalchemy import Boolean, DateTime, ForeignKey, String, UniqueConstraint, func
+from sqlalchemy import BigInteger, Boolean, DateTime, ForeignKey, String, UniqueConstraint, func
 from sqlalchemy.dialects.postgresql import UUID as PGUUID
 from sqlalchemy.orm import Mapped, mapped_column
 from uuid6 import uuid7
@@ -30,6 +30,9 @@ class User(SQLAlchemyBaseUserTableUUID, Base):
     )
     mfa_secret: Mapped[str | None] = mapped_column(String(32), nullable=True)
     mfa_enabled: Mapped[bool] = mapped_column(Boolean, default=False)
+    # Último timestep TOTP consumido com sucesso no login — bloqueia replay do
+    # mesmo código dentro da janela de validade (±1 período).
+    mfa_last_used_timestep: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )

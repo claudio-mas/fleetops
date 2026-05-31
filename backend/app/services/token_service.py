@@ -92,9 +92,7 @@ class TokenService:
 
         token_hash = TokenService.generate_token_hash(token)
         result = await session.execute(
-            select(EmailVerificationToken).where(
-                EmailVerificationToken.token_hash == token_hash
-            )
+            select(EmailVerificationToken).where(EmailVerificationToken.token_hash == token_hash)
         )
         verification_token = result.scalars().first()
         if verification_token is None:

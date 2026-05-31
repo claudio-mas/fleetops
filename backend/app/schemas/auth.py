@@ -48,12 +48,22 @@ class TokenResponse(BaseModel):
     token_type: str = "bearer"
 
 
+class LoginResponse(BaseModel):
+    access_token: str | None = None
+    refresh_token: str | None = None
+    token_type: str = "bearer"
+    mfa_required: bool = False
+    mfa_challenge_token: str | None = None
+
+
 class UserRead(BaseModel):
     id: uuid.UUID
     tenant_id: uuid.UUID
     email: str
     full_name: str
     is_active: bool
+    mfa_enabled: bool
+    email_verified_at: datetime | None
     created_at: datetime
 
     model_config = {"from_attributes": True}
@@ -89,4 +99,4 @@ class MFALoginRequest(BaseModel):
 class MFALoginResponse(BaseModel):
     access_token: str
     refresh_token: str
-    token_type: str
+    token_type: str = "bearer"

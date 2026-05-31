@@ -21,9 +21,7 @@ class InvitationStatus(StrEnum):
 class UserInvitation(Base):
     __tablename__ = "user_invitation"
 
-    id: Mapped[uuid.UUID] = mapped_column(
-        PGUUID(as_uuid=True), primary_key=True, default=uuid7
-    )
+    id: Mapped[uuid.UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=uuid7)
     tenant_id: Mapped[uuid.UUID] = mapped_column(
         PGUUID(as_uuid=True),
         ForeignKey("tenant.id", ondelete="CASCADE"),
@@ -51,9 +49,7 @@ class UserInvitation(Base):
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
-    accepted_at: Mapped[datetime | None] = mapped_column(
-        DateTime(timezone=True), nullable=True
-    )
+    accepted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     accepted_user_id: Mapped[uuid.UUID | None] = mapped_column(
         PGUUID(as_uuid=True),
         ForeignKey("user.id", ondelete="SET NULL"),
@@ -69,6 +65,4 @@ class UserInvitation(Base):
         index=True,
     )
 
-    __table_args__ = (
-        UniqueConstraint("token_hash", name="uq_user_invitation_token_hash"),
-    )
+    __table_args__ = (UniqueConstraint("token_hash", name="uq_user_invitation_token_hash"),)

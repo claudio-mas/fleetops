@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { useSetupMFA, useConfirmMFA } from "@/hooks/useMFA";
 import { useMFAStore } from "@/stores/mfa";
 
@@ -13,6 +14,7 @@ interface ApiError {
 
 export default function MFASetup() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
@@ -52,6 +54,7 @@ export default function MFASetup() {
       {
         onSuccess: () => {
           setMessage("MFA habilitado com sucesso!");
+          queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
           setTimeout(() => {
             navigate("/dashboard");
           }, 2000);

@@ -38,9 +38,7 @@ def test_provisioning_uri():
 def test_provisioning_uri_custom_issuer():
     """Test provisioning URI with custom issuer."""
     secret = "JBSWY3DPEBLW64TMMQ======"
-    uri = MFAService.get_provisioning_uri(
-        secret, "user@example.com", issuer="CustomApp"
-    )
+    uri = MFAService.get_provisioning_uri(secret, "user@example.com", issuer="CustomApp")
 
     assert "CustomApp" in uri
 

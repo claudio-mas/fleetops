@@ -64,9 +64,7 @@ async def test_create_user_invitation_returns_token(db, sample_user, tenant):
     assert isinstance(token, str)
 
 
-async def test_create_invitation_with_custom_expiration(
-    db, sample_user, tenant
-):
+async def test_create_invitation_with_custom_expiration(db, sample_user, tenant):
     """Test creating invitation with custom expiration."""
     token = await TokenService.create_user_invitation(
         db,
@@ -100,9 +98,7 @@ async def test_get_invitation_by_token(db, sample_user, tenant):
 
 async def test_get_invitation_invalid_token(db):
     """Test retrieving invitation with invalid token returns None."""
-    invitation = await TokenService.get_invitation_by_token(
-        db, "invalid_token"
-    )
+    invitation = await TokenService.get_invitation_by_token(db, "invalid_token")
     assert invitation is None
 
 
@@ -169,11 +165,7 @@ async def test_accept_invitation(db, sample_user, tenant):
 
     # Verify invitation was updated
     token_hash = TokenService.generate_token_hash(token)
-    result = await db.execute(
-        select(UserInvitation).where(
-            UserInvitation.token_hash == token_hash
-        )
-    )
+    result = await db.execute(select(UserInvitation).where(UserInvitation.token_hash == token_hash))
     invitation = result.scalars().first()
 
     assert invitation.status == InvitationStatus.ACCEPTED
@@ -187,9 +179,7 @@ async def test_accept_invitation_invalid_token(db):
 
     new_user_id = uuid4()
 
-    success = await TokenService.accept_invitation(
-        db, "invalid_token", new_user_id
-    )
+    success = await TokenService.accept_invitation(db, "invalid_token", new_user_id)
     assert success is False
 
 
@@ -221,9 +211,7 @@ async def test_accept_invitation_expired(db, sample_user, tenant):
     assert success is False
 
 
-async def test_create_multiple_invitations_same_tenant(
-    db, sample_user, tenant
-):
+async def test_create_multiple_invitations_same_tenant(db, sample_user, tenant):
     """Test creating multiple invitations for different users in same
     tenant."""
     token1 = await TokenService.create_user_invitation(
@@ -273,9 +261,7 @@ async def test_invitation_persists_correctly(db, sample_user, tenant):
     assert invitation.accepted_user_id is None
 
 
-async def test_expired_invitation_not_retrievable_after_mark(
-    db, sample_user, tenant
-):
+async def test_expired_invitation_not_retrievable_after_mark(db, sample_user, tenant):
     """Test that expired invitation cannot be retrieved even by direct
     query."""
     token = await TokenService.create_user_invitation(
@@ -300,10 +286,6 @@ async def test_expired_invitation_not_retrievable_after_mark(
     assert invitation is None
 
     # Verify it was marked as EXPIRED in DB
-    result = await db.execute(
-        select(UserInvitation).where(
-            UserInvitation.token_hash == token_hash
-        )
-    )
+    result = await db.execute(select(UserInvitation).where(UserInvitation.token_hash == token_hash))
     db_invitation = result.scalars().first()
     assert db_invitation.status == InvitationStatus.EXPIRED

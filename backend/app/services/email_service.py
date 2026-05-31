@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 
 class EmailSendError(Exception):
     """Raised when email sending fails."""
+
     pass
 
 
@@ -51,15 +52,11 @@ class ResendEmailService(EmailService):
                 },
             )
             if result.get("id") is None:
-                raise EmailSendError(
-                    f"Resend returned no id: {result}"
-                ) from None
+                raise EmailSendError(f"Resend returned no id: {result}") from None
         except EmailSendError:
             raise
         except Exception as e:
-            raise EmailSendError(
-                f"Failed to send email to {to}: {e}"
-            ) from e
+            raise EmailSendError(f"Failed to send email to {to}: {e}") from e
 
 
 def get_email_service() -> EmailService:

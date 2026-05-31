@@ -28,10 +28,19 @@ from app.services.user_manager import get_user_db, get_user_manager  # noqa: E40
 
 @pytest.fixture(scope="session", autouse=True)
 def mock_celery_tasks() -> Any:
-    """Mock Celery tasks to prevent trying to connect to RabbitMQ."""
-    with patch("app.tasks.email.send_email_verification") as mock_send:
-        mock_send.delay = MagicMock(return_value=None)
-        yield mock_send
+    """Mock Celery task dispatch to prevent connecting to the broker.
+
+    Patch ``.delay`` on the shared Task objects (not the module name): every
+    ``from app.tasks.email import X`` references the same object, so this holds
+    even when a module captured the task before this fixture ran.
+    """
+    from app.tasks.email import send_email_verification, send_user_invitation
+
+    with (
+        patch.object(send_email_verification, "delay", MagicMock(return_value=None)),
+        patch.object(send_user_invitation, "delay", MagicMock(return_value=None)),
+    ):
+        yield
 
 
 @pytest.fixture(scope="session")
@@ -125,10 +134,7 @@ async def dummy_role(db: AsyncSession):  # type: ignore[no-untyped-def]
 
     role_id = uuid.uuid4()
     await db.execute(
-        text(
-            "INSERT INTO role (id) VALUES (:id) "
-            "ON CONFLICT (id) DO NOTHING"
-        ),
+        text("INSERT INTO role (id) VALUES (:id) ON CONFLICT (id) DO NOTHING"),
         {"id": str(role_id)},
     )
     await db.commit()
