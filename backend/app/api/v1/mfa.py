@@ -1,12 +1,22 @@
 from __future__ import annotations
 
+import uuid
+from datetime import UTC, datetime, timedelta
 from typing import Annotated
 
+import jwt as pyjwt
 from fastapi import APIRouter, Depends, Header, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user
+from app.core.config import settings
 from app.core.database import get_session
+from app.core.security import (
+    create_access_token,
+    create_refresh_token,
+    decode_mfa_challenge_token,
+    hash_token,
+)
 from app.models.user import User
 from app.schemas.auth import (
     MFAConfirmRequest,
@@ -51,9 +61,7 @@ async def confirm_mfa(
     current_user: Annotated[User, Depends(get_current_user)],
 ) -> MFAConfirmResponse:
     """Confirm MFA setup with TOTP code."""
-    success = await MFAService.confirm_mfa(
-        session, current_user.id, req.secret, req.token
-    )
+    success = await MFAService.confirm_mfa(session, current_user.id, req.secret, req.token)
 
     if not success:
         raise HTTPException(
@@ -101,7 +109,32 @@ async def mfa_login(
             detail="Missing MFA challenge token",
         )
 
-    raise HTTPException(
-        status_code=status.HTTP_501_NOT_IMPLEMENTED,
-        detail="MFA login endpoint requires challenge token decoding",
+    credentials_exc = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Desafio MFA inválido ou expirado",
     )
+    try:
+        payload = decode_mfa_challenge_token(x_mfa_challenge)
+        user_id = uuid.UUID(str(payload["sub"]))
+    except (pyjwt.InvalidTokenError, KeyError, ValueError):
+        raise credentials_exc from None
+
+    if not await MFAService.validate_mfa_login(session, user_id, req.token):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Código TOTP inválido",
+        )
+
+    user = await session.get(User, user_id)
+    if user is None or not user.is_active:
+        raise credentials_exc
+
+    access_token = create_access_token(user.id, user.tenant_id)
+    refresh_raw = create_refresh_token()
+    user.refresh_token_hash = hash_token(refresh_raw)
+    user.refresh_token_expires_at = datetime.now(UTC) + timedelta(
+        seconds=settings.jwt_refresh_token_expire_seconds
+    )
+    await session.commit()
+
+    return MFALoginResponse(access_token=access_token, refresh_token=refresh_raw)

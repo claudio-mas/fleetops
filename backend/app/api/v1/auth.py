@@ -16,11 +16,22 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.deps import CurrentUser, require_role
 from app.core.config import settings
 from app.core.database import get_session
-from app.core.security import create_access_token, create_refresh_token, hash_token
+from app.core.security import (
+    create_access_token,
+    create_mfa_challenge_token,
+    create_refresh_token,
+    hash_token,
+)
 from app.models.role import RoleName, UserRole
 from app.models.tenant import Tenant, TenantStatus
 from app.models.user import User
-from app.schemas.auth import RefreshRequest, TenantRegistrationRequest, TokenResponse, UserRead
+from app.schemas.auth import (
+    LoginResponse,
+    RefreshRequest,
+    TenantRegistrationRequest,
+    TokenResponse,
+    UserRead,
+)
 from app.services.token_service import TokenService
 from app.services.user_manager import get_user_db, get_user_manager
 from app.tasks.email import send_email_verification
@@ -115,11 +126,11 @@ async def register_tenant(
     return TokenResponse(access_token=access_token, refresh_token=refresh_raw)
 
 
-@router.post("/login", response_model=TokenResponse)
+@router.post("/login", response_model=LoginResponse)
 async def login(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     session: Annotated[AsyncSession, Depends(get_session)],
-) -> TokenResponse:
+) -> LoginResponse:
     result = await session.execute(select(User).where(User.email == form_data.username))  # type: ignore[arg-type]
     user = result.scalar_one_or_none()
 
@@ -145,14 +156,15 @@ async def login(
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Usuário inativo")
 
     if user.mfa_enabled:
-        return {"mfa_required": True, "mfa_challenge_token": "TODO: implement JWT challenge"}  # type: ignore[return-value]
+        challenge = create_mfa_challenge_token(user.id, user.tenant_id)
+        return LoginResponse(mfa_required=True, mfa_challenge_token=challenge)
 
     access_token, refresh_raw, expires_at = _issue_tokens(user)
     user.refresh_token_hash = hash_token(refresh_raw)
     user.refresh_token_expires_at = expires_at
     await session.commit()
 
-    return TokenResponse(access_token=access_token, refresh_token=refresh_raw)
+    return LoginResponse(access_token=access_token, refresh_token=refresh_raw)
 
 
 @router.post("/refresh", response_model=TokenResponse)

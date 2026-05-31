@@ -18,6 +18,8 @@ export interface UserRead {
   email: string;
   full_name: string;
   is_active: boolean;
+  mfa_enabled: boolean;
+  email_verified_at: string | null;
   created_at: string;
 }
 
