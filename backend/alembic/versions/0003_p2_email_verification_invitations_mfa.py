@@ -6,20 +6,49 @@ Create Date: 2026-05-26
 """
 
 import sqlalchemy as sa
-from alembic import op
 from sqlalchemy.dialects import postgresql
+
+from alembic import op
 
 revision = "0003"
 down_revision = "0002"
 branch_labels = None
 depends_on = None
 
+# PostgreSQL-native ENUMs com create_type=False: a criação/remoção do tipo é
+# controlada explicitamente aqui, NÃO pelo evento before_create do create_table.
+# Usar o sa.Enum genérico NÃO propaga create_type ao tipo nativo
+# (adapt_emulated_to_native só copia create_type quando o impl já é nativo),
+# fazendo o create_table emitir um segundo CREATE TYPE em duplicidade.
+invitation_status_enum = postgresql.ENUM(
+    "pending",
+    "accepted",
+    "rejected",
+    "expired",
+    name="invitation_status",
+    create_type=False,
+)
+# role_name já existe desde a 0002 — referenciado apenas para a coluna FK do
+# enum, sem recriar o tipo (create_type=False suprime o CREATE TYPE).
+role_name_enum = postgresql.ENUM(
+    "owner",
+    "admin",
+    "gestor",
+    "operador",
+    "mecanico",
+    "leitura",
+    name="role_name",
+    create_type=False,
+)
+
 
 def upgrade() -> None:
     # ── Add columns to user table ────────────────────────────────────────────
     op.add_column("user", sa.Column("email_verified_at", sa.DateTime(timezone=True), nullable=True))
     op.add_column("user", sa.Column("mfa_secret", sa.String(32), nullable=True))
-    op.add_column("user", sa.Column("mfa_enabled", sa.Boolean(), nullable=False, server_default="false"))
+    op.add_column(
+        "user", sa.Column("mfa_enabled", sa.Boolean(), nullable=False, server_default="false")
+    )
 
     # ── email_verification_token ─────────────────────────────────────────────
     op.create_table(
@@ -49,7 +78,9 @@ def upgrade() -> None:
         sa.Column("confirmed_at", sa.DateTime(timezone=True), nullable=True),
         sa.UniqueConstraint("token_hash", name="uq_email_verification_token_hash"),
     )
-    op.create_index("ix_email_verification_token_tenant_id", "email_verification_token", ["tenant_id"])
+    op.create_index(
+        "ix_email_verification_token_tenant_id", "email_verification_token", ["tenant_id"]
+    )
     op.create_index("ix_email_verification_token_user_id", "email_verification_token", ["user_id"])
 
     # ── RLS on email_verification_token ──────────────────────────────────────
@@ -65,11 +96,10 @@ def upgrade() -> None:
     )
 
     # ── user_invitation (with invitation_status enum) ────────────────────────
-    op.execute(
-        """
-        CREATE TYPE invitation_status AS ENUM ('pending', 'accepted', 'rejected', 'expired')
-        """
-    )
+    # Cria o tipo explicitamente e de forma idempotente. As colunas abaixo usam
+    # postgresql.ENUM(create_type=False), então o create_table NÃO emite um
+    # segundo CREATE TYPE (nem para invitation_status nem para role_name).
+    invitation_status_enum.create(op.get_bind(), checkfirst=True)
     op.create_table(
         "user_invitation",
         sa.Column("id", postgresql.UUID(as_uuid=True), primary_key=True),
@@ -89,8 +119,7 @@ def upgrade() -> None:
         sa.Column("token_hash", sa.String(64), nullable=False),
         sa.Column(
             "status",
-            sa.Enum("pending", "accepted", "rejected", "expired",
-                    name="invitation_status", create_type=False),
+            invitation_status_enum,
             nullable=False,
             server_default="pending",
         ),
@@ -110,8 +139,7 @@ def upgrade() -> None:
         ),
         sa.Column(
             "role_name",
-            sa.Enum("owner", "admin", "gestor", "operador", "mecanico", "leitura",
-                    name="role_name", create_type=False),
+            role_name_enum,
             nullable=False,
         ),
         sa.UniqueConstraint("token_hash", name="uq_user_invitation_token_hash"),
