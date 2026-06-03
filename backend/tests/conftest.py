@@ -155,7 +155,7 @@ async def user_with_token(  # type: ignore[no-untyped-def]
         async for mgr in get_user_manager(user_db_inst):
             u = await mgr.create(
                 _UC(
-                    email=f"user-{uuid7().hex[:8]}@test.com",
+                    email=f"user-{uuid7().hex[:16]}@test.com",
                     password="SenhaForte123!",
                     tenant_id=tenant.id,
                     full_name="User Test",
