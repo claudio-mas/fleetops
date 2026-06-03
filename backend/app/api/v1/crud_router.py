@@ -6,6 +6,7 @@ from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import CurrentUser, TenantSession, get_current_tenant_id, require_role
 from app.crud.base import CRUDBase, VersionConflictError
@@ -14,7 +15,9 @@ from app.schemas.common import PaginatedResponse
 
 WRITE_ROLES = (RoleName.OWNER, RoleName.ADMIN, RoleName.GESTOR)
 
-RefValidator = Callable[[TenantSession, uuid.UUID, dict[str, Any]], Awaitable[None]]
+RefValidator = Callable[[AsyncSession, uuid.UUID, dict[str, Any]], Awaitable[None]]
+
+TenantId = Annotated[uuid.UUID, Depends(get_current_tenant_id)]
 
 
 def build_crud_router(
@@ -32,7 +35,7 @@ def build_crud_router(
     @router.get("", response_model=PaginatedResponse[read_schema])  # type: ignore[valid-type]
     async def list_items(
         session: TenantSession,
-        tenant_id: Annotated[uuid.UUID, Depends(get_current_tenant_id)],
+        tenant_id: TenantId,
         limit: Annotated[int, Query(ge=1, le=200)] = 50,
         offset: Annotated[int, Query(ge=0)] = 0,
         search: Annotated[str | None, Query(max_length=255)] = None,
@@ -51,12 +54,12 @@ def build_crud_router(
     async def get_item(
         obj_id: uuid.UUID,
         session: TenantSession,
-        tenant_id: Annotated[uuid.UUID, Depends(get_current_tenant_id)],
+        tenant_id: TenantId,
     ) -> Any:
         obj = await crud.get(session, tenant_id=tenant_id, obj_id=obj_id)
         if obj is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Não encontrado")
-        return obj
+        return read_schema.model_validate(obj, from_attributes=True)
 
     @router.post(
         "",
@@ -68,7 +71,7 @@ def build_crud_router(
         payload: create_schema,  # type: ignore[valid-type]
         session: TenantSession,
         user: CurrentUser,
-        tenant_id: Annotated[uuid.UUID, Depends(get_current_tenant_id)],
+        tenant_id: TenantId,
     ) -> Any:
         data = payload.model_dump()  # type: ignore[attr-defined]
         if validate_refs is not None:
@@ -88,10 +91,15 @@ def build_crud_router(
         payload: update_schema,  # type: ignore[valid-type]
         session: TenantSession,
         user: CurrentUser,
-        tenant_id: Annotated[uuid.UUID, Depends(get_current_tenant_id)],
+        tenant_id: TenantId,
     ) -> Any:
         data = payload.model_dump()  # type: ignore[attr-defined]
-        expected_version = data.pop("version")
+        expected_version = data.pop("version", None)
+        if expected_version is None:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail="Campo 'version' é obrigatório para atualização",
+            )
         if validate_refs is not None:
             await validate_refs(session, tenant_id, data)
         try:
@@ -123,7 +131,7 @@ def build_crud_router(
         obj_id: uuid.UUID,
         session: TenantSession,
         user: CurrentUser,
-        tenant_id: Annotated[uuid.UUID, Depends(get_current_tenant_id)],
+        tenant_id: TenantId,
     ) -> None:
         ok = await crud.soft_delete(session, tenant_id=tenant_id, obj_id=obj_id, user_id=user.id)
         if not ok:
