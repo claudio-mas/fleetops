@@ -81,6 +81,11 @@ def build_crud_router(
         await session.refresh(obj)
         return obj
 
+    # `from __future__ import annotations` makes all annotations lazy ForwardRefs.
+    # FastAPI cannot resolve closure variables like `create_schema` via get_type_hints(),
+    # so we override __annotations__ with the real classes after definition.
+    create_item.__annotations__["payload"] = create_schema
+
     @router.put(
         "/{obj_id}",
         response_model=read_schema,
@@ -121,6 +126,8 @@ def build_crud_router(
         await session.commit()
         await session.refresh(obj)
         return obj
+
+    update_item.__annotations__["payload"] = update_schema
 
     @router.delete(
         "/{obj_id}",
