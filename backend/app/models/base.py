@@ -4,6 +4,7 @@ from datetime import datetime
 from sqlalchemy import DateTime, Integer, func, text
 from sqlalchemy.dialects.postgresql import UUID as PGUUID
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from uuid6 import uuid7
 
 
 class Base(DeclarativeBase):
@@ -24,3 +25,10 @@ class OperationalMixin(TimestampMixin):
     updated_by: Mapped[uuid.UUID | None] = mapped_column(PGUUID(as_uuid=True), nullable=True)
     deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     version: Mapped[int] = mapped_column(Integer, server_default=text("1"), nullable=False)
+
+
+class OperationalBase(Base, OperationalMixin):
+    __abstract__ = True
+
+    id: Mapped[uuid.UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=uuid7)
+    tenant_id: Mapped[uuid.UUID] = mapped_column(PGUUID(as_uuid=True), nullable=False, index=True)
