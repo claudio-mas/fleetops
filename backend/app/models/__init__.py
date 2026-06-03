@@ -1,4 +1,5 @@
 from app.models.base import Base, OperationalMixin, TimestampMixin
+from app.models.centro_custo import CentroCusto
 from app.models.email_verification import EmailVerificationToken
 from app.models.role import RoleName, UserRole
 from app.models.tenant import Tenant, TenantStatus
@@ -14,4 +15,5 @@ __all__ = [
     "RoleName",
     "UserRole",
     "EmailVerificationToken",
+    "CentroCusto",
 ]
