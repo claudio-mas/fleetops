@@ -67,3 +67,22 @@ async def test_create_duplicate_nome_returns_409(client, user_with_token):
     assert r1.status_code == 201, r1.text
     r2 = await client.post("/api/v1/cadastros/centro-custo", json=payload, headers=_auth(token))
     assert r2.status_code == 409, r2.text
+
+
+async def test_update_to_duplicate_nome_returns_409(client, user_with_token):
+    token = user_with_token["token"]
+    a = await client.post(
+        "/api/v1/cadastros/centro-custo", json={"nome": "Alpha CC"}, headers=_auth(token)
+    )
+    assert a.status_code == 201, a.text
+    b = await client.post(
+        "/api/v1/cadastros/centro-custo", json={"nome": "Beta CC"}, headers=_auth(token)
+    )
+    assert b.status_code == 201, b.text
+    b_id = b.json()["id"]
+    r = await client.put(
+        f"/api/v1/cadastros/centro-custo/{b_id}",
+        json={"nome": "Alpha CC", "responsavel": None, "observacoes": None, "version": 1},
+        headers=_auth(token),
+    )
+    assert r.status_code == 409, r.text
