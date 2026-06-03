@@ -1,6 +1,7 @@
 from app.models.base import Base, OperationalMixin, TimestampMixin
 from app.models.cargo import Cargo
 from app.models.centro_custo import CentroCusto
+from app.models.colaborador import Colaborador
 from app.models.combustivel import Combustivel
 from app.models.conta_contabil import ContaContabil
 from app.models.email_verification import EmailVerificationToken
@@ -24,6 +25,7 @@ __all__ = [
     "EmailVerificationToken",
     "CentroCusto",
     "Cargo",
+    "Colaborador",
     "Combustivel",
     "ContaContabil",
     "GrupoInsumo",

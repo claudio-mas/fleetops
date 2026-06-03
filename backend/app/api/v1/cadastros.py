@@ -4,8 +4,10 @@ from fastapi import APIRouter
 
 from app.api.v1.crud_router import build_crud_router
 from app.crud.base import CRUDBase
+from app.crud.refs import fk_validator
 from app.models.cargo import Cargo
 from app.models.centro_custo import CentroCusto
+from app.models.colaborador import Colaborador
 from app.models.combustivel import Combustivel
 from app.models.conta_contabil import ContaContabil
 from app.models.grupo_insumo import GrupoInsumo
@@ -14,6 +16,7 @@ from app.models.tipo_servico import TipoServico
 from app.models.unidade_medida import UnidadeMedida
 from app.schemas.cargo import CargoCreate, CargoRead, CargoUpdate
 from app.schemas.centro_custo import CentroCustoCreate, CentroCustoRead, CentroCustoUpdate
+from app.schemas.colaborador import ColaboradorCreate, ColaboradorRead, ColaboradorUpdate
 from app.schemas.combustivel import CombustivelCreate, CombustivelRead, CombustivelUpdate
 from app.schemas.conta_contabil import ContaContabilCreate, ContaContabilRead, ContaContabilUpdate
 from app.schemas.grupo_insumo import GrupoInsumoCreate, GrupoInsumoRead, GrupoInsumoUpdate
@@ -91,5 +94,14 @@ routers: list[APIRouter] = [
         create_schema=UnidadeMedidaCreate,
         update_schema=UnidadeMedidaUpdate,
         read_schema=UnidadeMedidaRead,
+    ),
+    build_crud_router(
+        prefix=f"{_BASE}/colaborador",
+        tag="cadastros:colaborador",
+        crud=CRUDBase(Colaborador, search_fields=["nome", "email"]),
+        create_schema=ColaboradorCreate,
+        update_schema=ColaboradorUpdate,
+        read_schema=ColaboradorRead,
+        validate_refs=fk_validator("cargo_id", Cargo, "Cargo"),
     ),
 ]
