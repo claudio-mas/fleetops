@@ -10,10 +10,7 @@ class CentroCustoCreate(BaseModel):
     observacoes: str | None = None
 
 
-class CentroCustoUpdate(BaseModel):
-    nome: str = Field(min_length=1, max_length=255)
-    responsavel: str | None = Field(default=None, max_length=255)
-    observacoes: str | None = None
+class CentroCustoUpdate(CentroCustoCreate):
     version: int = Field(ge=1)
 
 

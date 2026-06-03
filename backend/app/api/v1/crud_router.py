@@ -4,6 +4,7 @@ from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import CurrentUser, TenantSession, get_current_tenant_id, require_role
@@ -74,8 +75,15 @@ def build_crud_router(
         data = payload.model_dump()  # type: ignore[attr-defined]
         if validate_refs is not None:
             await validate_refs(session, tenant_id, data)
-        obj = await crud.create(session, tenant_id=tenant_id, user_id=user.id, data=data)
-        await session.commit()
+        try:
+            obj = await crud.create(session, tenant_id=tenant_id, user_id=user.id, data=data)
+            await session.commit()
+        except IntegrityError:
+            await session.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Já existe um registro com esse valor único neste tenant",
+            ) from None
         await session.refresh(obj)
         return obj
 
@@ -114,9 +122,22 @@ def build_crud_router(
                 status_code=status.HTTP_409_CONFLICT,
                 detail="Registro foi modificado por outro usuário (conflito de versão)",
             ) from None
+        except IntegrityError:
+            await session.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Já existe um registro com esse valor único neste tenant",
+            ) from None
         if obj is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Não encontrado")
-        await session.commit()
+        try:
+            await session.commit()
+        except IntegrityError:
+            await session.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Já existe um registro com esse valor único neste tenant",
+            ) from None
         await session.refresh(obj)
         return obj
 

@@ -152,7 +152,7 @@ async def test_accept_invitation(db, sample_user, tenant):
         async for mgr in get_user_manager(user_db_inst):
             new_user = await mgr.create(
                 _UC(
-                    email=f"accepted-{uuid7().hex[:8]}@test.com",
+                    email=f"accepted-{uuid7().hex[:16]}@test.com",
                     password="SenhaForte123!",
                     tenant_id=str(tenant.id),
                     full_name="Accepted User",

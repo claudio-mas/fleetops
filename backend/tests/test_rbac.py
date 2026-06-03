@@ -72,7 +72,7 @@ async def test_user_without_required_role_gets_403(
         async for mgr in get_user_manager(user_db_inst):
             leitura_user = await mgr.create(
                 _UC(
-                    email=f"leitura-{uuid7().hex[:8]}@rbac.com",
+                    email=f"leitura-{uuid7().hex[:16]}@rbac.com",
                     password="SenhaForte123!",
                     tenant_id=tenant.id,
                     full_name="Leitura User",
