@@ -11,6 +11,7 @@ from app.models.conta_contabil import ContaContabil
 from app.models.grupo_insumo import GrupoInsumo
 from app.models.tipo_equipamento import TipoEquipamento
 from app.models.tipo_servico import TipoServico
+from app.models.unidade_medida import UnidadeMedida
 from app.schemas.cargo import CargoCreate, CargoRead, CargoUpdate
 from app.schemas.centro_custo import CentroCustoCreate, CentroCustoRead, CentroCustoUpdate
 from app.schemas.combustivel import CombustivelCreate, CombustivelRead, CombustivelUpdate
@@ -22,6 +23,7 @@ from app.schemas.tipo_equipamento import (
     TipoEquipamentoUpdate,
 )
 from app.schemas.tipo_servico import TipoServicoCreate, TipoServicoRead, TipoServicoUpdate
+from app.schemas.unidade_medida import UnidadeMedidaCreate, UnidadeMedidaRead, UnidadeMedidaUpdate
 
 _BASE = "/api/v1/cadastros"
 
@@ -81,5 +83,13 @@ routers: list[APIRouter] = [
         create_schema=GrupoInsumoCreate,
         update_schema=GrupoInsumoUpdate,
         read_schema=GrupoInsumoRead,
+    ),
+    build_crud_router(
+        prefix=f"{_BASE}/unidade-medida",
+        tag="cadastros:unidade-medida",
+        crud=CRUDBase(UnidadeMedida, search_fields=["codigo", "nome"]),
+        create_schema=UnidadeMedidaCreate,
+        update_schema=UnidadeMedidaUpdate,
+        read_schema=UnidadeMedidaRead,
     ),
 ]

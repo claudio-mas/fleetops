@@ -9,6 +9,7 @@ from app.models.role import RoleName, UserRole
 from app.models.tenant import Tenant, TenantStatus
 from app.models.tipo_equipamento import TipoEquipamento
 from app.models.tipo_servico import TipoServico
+from app.models.unidade_medida import UnidadeMedida
 from app.models.user import User
 
 __all__ = [
@@ -28,4 +29,5 @@ __all__ = [
     "GrupoInsumo",
     "TipoEquipamento",
     "TipoServico",
+    "UnidadeMedida",
 ]
