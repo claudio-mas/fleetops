@@ -15,7 +15,7 @@ export function CrudListPage({ config }: { config: CadastroConfig }) {
   const columns = config.fields.filter((f) => f.listColumn);
 
   return (
-    <div className="space-y-4 p-6">
+    <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">{config.label}</h2>
         <button
