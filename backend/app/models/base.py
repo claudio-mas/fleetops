@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import DateTime, Integer, func, text
+from sqlalchemy import DateTime, ForeignKey, Integer, func, text
 from sqlalchemy.dialects.postgresql import UUID as PGUUID
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from uuid6 import uuid7
@@ -31,4 +31,9 @@ class OperationalBase(Base, OperationalMixin):
     __abstract__ = True
 
     id: Mapped[uuid.UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=uuid7)
-    tenant_id: Mapped[uuid.UUID] = mapped_column(PGUUID(as_uuid=True), nullable=False, index=True)
+    tenant_id: Mapped[uuid.UUID] = mapped_column(
+        PGUUID(as_uuid=True),
+        ForeignKey("tenant.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )

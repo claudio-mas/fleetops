@@ -1,6 +1,6 @@
 import pytest
 
-pytestmark = pytest.mark.anyio
+pytestmark = pytest.mark.asyncio
 
 
 def _auth(token: str) -> dict[str, str]:
