@@ -5,6 +5,8 @@ import { Login } from "@/pages/Login";
 import { Register } from "@/pages/Register";
 import VerifyEmail from "@/pages/VerifyEmail";
 import MFASetup from "@/pages/MFASetup";
+import { CadastrosIndex } from "@/pages/cadastros/CadastrosIndex";
+import { CadastroPage } from "@/pages/cadastros/CadastroPage";
 
 export default function App() {
   return (
@@ -15,6 +17,8 @@ export default function App() {
       <Route element={<ProtectedRoute />}>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/mfa-setup" element={<MFASetup />} />
+        <Route path="/cadastros" element={<CadastrosIndex />} />
+        <Route path="/cadastros/:resource" element={<CadastroPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>

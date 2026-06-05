@@ -31,6 +31,12 @@ export function Dashboard() {
           <p className="text-gray-600">
             Bem-vindo, <strong>{user.full_name}</strong>!
           </p>
+          <Link
+            to="/cadastros"
+            className="inline-block rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+          >
+            Cadastros
+          </Link>
           <div className="pt-4 border-t border-gray-200">
             <h2 className="text-lg font-semibold text-gray-900 mb-3">Configurações de Segurança</h2>
             {user.mfa_enabled ? (

@@ -86,7 +86,7 @@ async def test_rls_user_role_isolation_via_set_local(db: AsyncSession) -> None:
         async for mgr in get_user_manager(user_db_inst):
             user_a = await mgr.create(
                 _UC(
-                    email=f"rls-a-{uuid7().hex[:8]}@test.com",
+                    email=f"rls-a-{uuid7().hex[:16]}@test.com",
                     password="SenhaForte123!",
                     tenant_id=tenant_a.id,
                     full_name="User A",
@@ -94,7 +94,7 @@ async def test_rls_user_role_isolation_via_set_local(db: AsyncSession) -> None:
             )
             user_b = await mgr.create(
                 _UC(
-                    email=f"rls-b-{uuid7().hex[:8]}@test.com",
+                    email=f"rls-b-{uuid7().hex[:16]}@test.com",
                     password="SenhaForte123!",
                     tenant_id=tenant_b.id,
                     full_name="User B",

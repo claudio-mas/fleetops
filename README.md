@@ -156,6 +156,7 @@ Makefile
 - [P0 — Foundation & Dev Environment](docs/superpowers/plans/2026-05-15-p0-foundation-dev-environment.md) ✅ **Concluído**
 - [P1 — Multi-tenant Auth & RBAC](docs/superpowers/plans/2026-05-22-p1-multitenant-auth-rbac.md) ✅ **Concluído**
 - [P2 — Email Verification, User Invitation & MFA](docs/superpowers/plans/2026-05-26-p2-email-verification-user-invitation-mfa.md) ✅ **Concluído**
+- [P4 — Cadastros Básicos](docs/superpowers/plans/2026-06-03-p4-cadastros-basicos.md) ✅ **Concluído**
 
 ### Guias Técnicos
 - [P2 Comprehensive Guide — Arquitetura, API, Security](docs/superpowers/P2_EMAIL_MFA.md)
@@ -167,6 +168,7 @@ Makefile
 - ✅ **P0** — Foundation & Dev Environment (concluído)
 - ✅ **P1** — Multi-tenant Auth & RBAC (concluído — 31 testes backend + 3 frontend)
 - ✅ **P2** — Email Verification, User Invitation & MFA (concluído — 65 testes, 3,500+ linhas de código)
+- ✅ **P4** — Cadastros Básicos (11 CRUDs full-stack com RLS, soft delete, optimistic lock)
 
 ### P3 Planejado
 **Próximas fases** (não iniciadas):

@@ -18,6 +18,7 @@ os.environ.setdefault("ENVIRONMENT", "test")
 
 from uuid6 import uuid7  # noqa: E402
 
+import app.models  # noqa: E402,F401  -- registra TODOS os models em Base.metadata
 from app.core.config import settings  # noqa: E402
 from app.core.security import create_access_token  # noqa: E402
 from app.models.base import Base  # noqa: E402
@@ -155,7 +156,7 @@ async def user_with_token(  # type: ignore[no-untyped-def]
         async for mgr in get_user_manager(user_db_inst):
             u = await mgr.create(
                 _UC(
-                    email=f"user-{uuid7().hex[:8]}@test.com",
+                    email=f"user-{uuid7().hex[:16]}@test.com",
                     password="SenhaForte123!",
                     tenant_id=tenant.id,
                     full_name="User Test",

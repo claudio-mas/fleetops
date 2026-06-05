@@ -1,8 +1,20 @@
 from app.models.base import Base, OperationalMixin, TimestampMixin
+from app.models.cargo import Cargo
+from app.models.centro_custo import CentroCusto
+from app.models.colaborador import Colaborador
+from app.models.combustivel import Combustivel
+from app.models.conta_contabil import ContaContabil
 from app.models.email_verification import EmailVerificationToken
+from app.models.fornecedor import Fornecedor
+from app.models.grupo_insumo import GrupoInsumo
+from app.models.insumo import Insumo
 from app.models.role import RoleName, UserRole
 from app.models.tenant import Tenant, TenantStatus
+from app.models.tipo_equipamento import TipoEquipamento
+from app.models.tipo_servico import TipoServico
+from app.models.unidade_medida import UnidadeMedida
 from app.models.user import User
+from app.models.user_invitation import InvitationStatus, UserInvitation
 
 __all__ = [
     "Base",
@@ -14,4 +26,17 @@ __all__ = [
     "RoleName",
     "UserRole",
     "EmailVerificationToken",
+    "UserInvitation",
+    "InvitationStatus",
+    "CentroCusto",
+    "Cargo",
+    "Colaborador",
+    "Combustivel",
+    "ContaContabil",
+    "Fornecedor",
+    "GrupoInsumo",
+    "Insumo",
+    "TipoEquipamento",
+    "TipoServico",
+    "UnidadeMedida",
 ]
