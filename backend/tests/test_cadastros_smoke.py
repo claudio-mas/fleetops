@@ -9,6 +9,7 @@ SIMPLE_RESOURCES = [
     ("tipo-equipamento", {"nome": "Retroescavadeira", "depreciacao_anual": "10.0000"}),
     ("tipo-servico", {"nome": "Troca de óleo"}),
     ("grupo-insumo", {"nome": "Lubrificantes"}),
+    ("fornecedor", {"nome": "Posto Central", "tipo": "PJ", "cnpj_cpf": "12345678000190"}),
 ]
 
 

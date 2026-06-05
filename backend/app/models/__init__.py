@@ -5,7 +5,9 @@ from app.models.colaborador import Colaborador
 from app.models.combustivel import Combustivel
 from app.models.conta_contabil import ContaContabil
 from app.models.email_verification import EmailVerificationToken
+from app.models.fornecedor import Fornecedor
 from app.models.grupo_insumo import GrupoInsumo
+from app.models.insumo import Insumo
 from app.models.role import RoleName, UserRole
 from app.models.tenant import Tenant, TenantStatus
 from app.models.tipo_equipamento import TipoEquipamento
@@ -28,7 +30,9 @@ __all__ = [
     "Colaborador",
     "Combustivel",
     "ContaContabil",
+    "Fornecedor",
     "GrupoInsumo",
+    "Insumo",
     "TipoEquipamento",
     "TipoServico",
     "UnidadeMedida",
