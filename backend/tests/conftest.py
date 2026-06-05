@@ -18,6 +18,7 @@ os.environ.setdefault("ENVIRONMENT", "test")
 
 from uuid6 import uuid7  # noqa: E402
 
+import app.models  # noqa: E402,F401  -- registra TODOS os models em Base.metadata
 from app.core.config import settings  # noqa: E402
 from app.core.security import create_access_token  # noqa: E402
 from app.models.base import Base  # noqa: E402

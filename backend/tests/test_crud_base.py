@@ -31,8 +31,8 @@ async def _widget_table(db_engine):  # type: ignore[no-untyped-def]
         await conn.run_sync(_Widget.__table__.drop, checkfirst=True)
 
 
-async def test_create_then_get(db, _widget_table):
-    tid = uuid.uuid4()
+async def test_create_then_get(db, _widget_table, tenant):
+    tid = tenant.id
     uid = uuid.uuid4()
     obj = await widget_crud.create(db, tenant_id=tid, user_id=uid, data={"nome": "Alpha"})
     await db.commit()
@@ -42,16 +42,16 @@ async def test_create_then_get(db, _widget_table):
     assert fetched.created_by == uid
 
 
-async def test_get_other_tenant_returns_none(db, _widget_table):
+async def test_get_other_tenant_returns_none(db, _widget_table, tenant):
     obj = await widget_crud.create(
-        db, tenant_id=uuid.uuid4(), user_id=uuid.uuid4(), data={"nome": "X"}
+        db, tenant_id=tenant.id, user_id=uuid.uuid4(), data={"nome": "X"}
     )
     await db.commit()
     assert await widget_crud.get(db, tenant_id=uuid.uuid4(), obj_id=obj.id) is None
 
 
-async def test_list_filters_by_search_and_excludes_soft_deleted(db, _widget_table):
-    tid = uuid.uuid4()
+async def test_list_filters_by_search_and_excludes_soft_deleted(db, _widget_table, tenant):
+    tid = tenant.id
     uid = uuid.uuid4()
     a = await widget_crud.create(db, tenant_id=tid, user_id=uid, data={"nome": "Bomba Diesel"})
     await widget_crud.create(db, tenant_id=tid, user_id=uid, data={"nome": "Gasolina"})
@@ -65,10 +65,10 @@ async def test_list_filters_by_search_and_excludes_soft_deleted(db, _widget_tabl
     assert total_after == 0
 
 
-async def test_update_bumps_version_and_requires_match(db, _widget_table):
+async def test_update_bumps_version_and_requires_match(db, _widget_table, tenant):
     from app.crud.base import VersionConflictError
 
-    tid = uuid.uuid4()
+    tid = tenant.id
     uid = uuid.uuid4()
     obj = await widget_crud.create(db, tenant_id=tid, user_id=uid, data={"nome": "V1"})
     await db.commit()
