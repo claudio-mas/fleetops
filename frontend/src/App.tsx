@@ -1,11 +1,12 @@
 import { Navigate, Route, Routes } from "react-router-dom";
+import { AppLayout } from "@/components/layout/AppLayout";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
-import { Dashboard } from "@/pages/Dashboard";
+import { Home } from "@/pages/Home";
 import { Login } from "@/pages/Login";
 import { Register } from "@/pages/Register";
 import VerifyEmail from "@/pages/VerifyEmail";
 import MFASetup from "@/pages/MFASetup";
-import { CadastrosIndex } from "@/pages/cadastros/CadastrosIndex";
+import { SecuritySettings } from "@/pages/settings/SecuritySettings";
 import { CadastroPage } from "@/pages/cadastros/CadastroPage";
 
 export default function App() {
@@ -15,10 +16,12 @@ export default function App() {
       <Route path="/register" element={<Register />} />
       <Route path="/verify-email" element={<VerifyEmail />} />
       <Route element={<ProtectedRoute />}>
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/mfa-setup" element={<MFASetup />} />
-        <Route path="/cadastros" element={<CadastrosIndex />} />
-        <Route path="/cadastros/:resource" element={<CadastroPage />} />
+        <Route element={<AppLayout />}>
+          <Route path="/dashboard" element={<Home />} />
+          <Route path="/mfa-setup" element={<MFASetup />} />
+          <Route path="/cadastros/:resource" element={<CadastroPage />} />
+          <Route path="/configuracoes/seguranca" element={<SecuritySettings />} />
+        </Route>
       </Route>
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>

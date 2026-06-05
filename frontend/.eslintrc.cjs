@@ -18,4 +18,12 @@ module.exports = {
     "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
     "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
   },
+  overrides: [
+    {
+      files: ["src/components/ui/**"],
+      rules: {
+        "react-refresh/only-export-components": "off",
+      },
+    },
+  ],
 };
