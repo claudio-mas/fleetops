@@ -19,7 +19,7 @@ Base.metadata.remove(_Widget.__table__)
 
 widget_crud = CRUDBase(_Widget, search_fields=["nome"])
 
-pytestmark = pytest.mark.anyio
+pytestmark = pytest.mark.asyncio
 
 
 @pytest.fixture(scope="session")
