@@ -1,6 +1,6 @@
 import pytest
 
-pytestmark = pytest.mark.anyio
+pytestmark = pytest.mark.asyncio
 
 
 async def test_colaborador_with_valid_cargo(client, user_with_token):

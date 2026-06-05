@@ -6,7 +6,7 @@ from app.core.security import create_access_token
 from app.models.role import RoleName, UserRole
 from app.models.tenant import Tenant, TenantStatus
 
-pytestmark = pytest.mark.anyio
+pytestmark = pytest.mark.asyncio
 
 
 async def _make_tenant_user(db):  # type: ignore[no-untyped-def]
