@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fdf8f7; /* surface */
+        }
+        .cream-on-cream-shadow {
+            box-shadow: 0px 4px 12px rgba(15, 10, 10, 0.04);
+        }
+        .maintenance-border {
+            border-top: 4px solid #006876; /* Teal secondary */
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-primary-fixed-variant": "#4d4545",
+                      "on-primary-container": "#8b8281",
+                      "surface": "#fdf8f7",
+                      "inverse-surface": "#323030",
+                      "surface-tint": "#655c5c",
+                      "on-secondary-container": "#006b79",
+                      "on-tertiary": "#ffffff",
+                      "error": "#ba1a1a",
+                      "on-error-container": "#93000a",
+                      "on-tertiary-fixed-variant": "#494a00",
+                      "on-surface": "#1c1b1b",
+                      "secondary-container": "#8aebff",
+                      "secondary-fixed": "#a1efff",
+                      "surface-container-highest": "#e6e1e1",
+                      "on-tertiary-fixed": "#1c1d00",
+                      "surface-dim": "#ded9d8",
+                      "tertiary-fixed-dim": "#cbcd22",
+                      "on-surface-variant": "#4e4544",
+                      "surface-container": "#f2edec",
+                      "primary-fixed": "#ece0df",
+                      "inverse-on-surface": "#f5f0ef",
+                      "on-secondary": "#ffffff",
+                      "outline": "#7f7574",
+                      "surface-container-low": "#f7f2f2",
+                      "surface-container-lowest": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "surface-variant": "#e6e1e1",
+                      "on-error": "#ffffff",
+                      "on-tertiary-container": "#878900",
+                      "secondary-fixed-dim": "#73d4e8",
+                      "surface-container-high": "#ece7e6",
+                      "on-secondary-fixed": "#001f25",
+                      "surface-bright": "#fdf8f7",
+                      "on-primary-fixed": "#201a1a",
+                      "primary": "#000000",
+                      "tertiary-fixed": "#e8ea41",
+                      "primary-fixed-dim": "#cfc4c3",
+                      "primary-container": "#201a1a",
+                      "on-background": "#1c1b1b",
+                      "on-primary": "#ffffff",
+                      "on-secondary-fixed-variant": "#004e5a",
+                      "tertiary-container": "#1c1d00",
+                      "secondary": "#006876",
+                      "inverse-primary": "#cfc4c3",
+                      "tertiary": "#000000",
+                      "background": "#fdf8f7",
+                      "outline-variant": "#d1c3c3"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "margin-page": "24px",
+                      "gutter": "12px",
+                      "xs": "4px",
+                      "unit": "4px",
+                      "xl": "32px",
+                      "lg": "24px",
+                      "md": "16px",
+                      "sm": "8px"
+              },
+              "fontFamily": {
+                      "display": ["Inter"],
+                      "mono-data": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "headline-lg": ["Inter"],
+                      "label-bold": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "body-md": ["Inter"]
+              },
+              "fontSize": {
+                      "display": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "mono-data": ["13px", {"lineHeight": "18px", "fontWeight": "500"}],
+                      "body-lg": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "headline-lg": ["20px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "label-bold": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "headline-md": ["16px", {"lineHeight": "24px", "fontWeight": "600"}],
+                      "label-sm": ["11px", {"lineHeight": "14px", "fontWeight": "500"}],
+                      "body-md": ["13px", {"lineHeight": "18px", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background">
+<!-- Shell Layout Wrapper -->
+<div class="flex min-h-screen">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full w-[240px] bg-inverse-surface dark:bg-inverse-surface border-r border-outline-variant flex flex-col py-lg z-50">
+<div class="px-lg mb-xl">
+<span class="font-headline-md text-headline-md font-bold text-on-primary">FleetOps Brasil</span>
+<p class="font-label-sm text-label-sm text-on-primary-container mt-1">Carlos Silva</p>
+</div>
+<nav class="flex-grow space-y-1">
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-on-surface hover:bg-on-primary-fixed-variant/20 transition-colors" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-on-surface hover:bg-on-primary-fixed-variant/20 transition-colors" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="font-body-md text-body-md">Equipamentos</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-on-surface hover:bg-on-primary-fixed-variant/20 transition-colors" href="#">
+<span class="material-symbols-outlined">local_gas_station</span>
+<span class="font-body-md text-body-md">Abastecimento</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-on-surface hover:bg-on-primary-fixed-variant/20 transition-colors" href="#">
+<span class="material-symbols-outlined">pending_actions</span>
+<span class="font-body-md text-body-md">Atividades</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-on-surface hover:bg-on-primary-fixed-variant/20 transition-colors" href="#">
+<span class="material-symbols-outlined">build</span>
+<span class="font-body-md text-body-md">Manutenção</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-on-surface hover:bg-on-primary-fixed-variant/20 transition-colors" href="#">
+<span class="material-symbols-outlined">assignment</span>
+<span class="font-body-md text-body-md">OS</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-on-surface hover:bg-on-primary-fixed-variant/20 transition-colors" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-body-md text-body-md">Relatórios</span>
+</a>
+<!-- Active Item: Configurações -->
+<a class="flex items-center gap-3 px-4 py-2 text-secondary-fixed border-l-4 border-secondary-fixed bg-surface-variant/10" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-md text-body-md">Configurações</span>
+</a>
+</nav>
+<div class="px-lg mt-auto">
+<button class="w-full py-2 bg-on-primary-fixed-variant/20 text-on-primary rounded font-label-bold text-label-bold hover:bg-on-primary-fixed-variant/40 transition-all active:scale-95">
+                    Novo Relatório
+                </button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-grow ml-[240px] flex flex-col">
+<!-- TopNavBar -->
+<header class="h-16 flex justify-between items-center px-lg bg-surface dark:bg-surface-container border-b border-outline-variant cream-on-cream-shadow sticky top-0 z-40">
+<div class="flex items-center gap-md">
+<span class="font-label-bold text-label-bold text-on-surface">Dashboard</span>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center text-outline">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</span>
+<input class="pl-10 pr-4 py-1.5 bg-surface-container-low border border-outline-variant rounded-lg text-body-md focus:outline-none focus:border-secondary w-64 transition-all" placeholder="Buscar..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-lg">
+<div class="flex items-center gap-sm">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-colors">
+<span class="material-symbols-outlined">help</span>
+</button>
+</div>
+<div class="flex items-center gap-sm pl-md border-l border-outline-variant">
+<div class="text-right">
+<p class="font-label-bold text-label-bold text-on-surface leading-tight">Carlos Silva</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Gestor de Frota</p>
+</div>
+<img alt="Carlos Silva" class="w-10 h-10 rounded-full border-2 border-surface-container-highest" data-alt="A professional headshot of Carlos Silva, a fleet manager in his 40s with a confident expression, wearing a tailored navy blazer over a crisp white shirt. The background is a clean, bright corporate office with soft natural lighting coming from a large window. The image conveys authority and precision, maintaining a high-contrast yet professional aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAU4LKszqQaFwZT_2z9-PjqGzo5bf9rfniQtnJnH8XpVnwdjvd1H-4nX7fHMSPfFQhYIOUzQ012fckKkI6kbj9giCuOxC8jwWee9no4UG0m5HD-icTN0C3ekuhbWaj1VQD4jjlQHByIyTM_zTvGdDzPCqlZ9kzPszmIOsb5dCcd4wEo62Cvtq-KShJR7ZCn3YP2nPYhx249_WACxKmVRD5S8Q9Vxqz299kNQpl_A1AehsTWXHPSfW3Nijl0BiYLwcV6hm1_CvtAOA4"/>
+</div>
+</div>
+</header>
+<!-- Page Canvas -->
+<div class="p-margin-page space-y-lg">
+<!-- Breadcrumb & Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-md">
+<div>
+<nav class="flex items-center gap-xs text-on-surface-variant mb-xs">
+<span class="font-label-sm text-label-sm">Configurações</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="font-label-sm text-label-sm text-secondary">Centros de Custo</span>
+</nav>
+<h1 class="font-display text-display text-primary">Centros de Custo</h1>
+</div>
+<button class="bg-secondary hover:bg-on-secondary-fixed-variant text-on-secondary flex items-center gap-sm px-lg py-2 rounded-lg font-label-bold text-label-bold transition-all active:scale-95 shadow-sm">
+<span class="material-symbols-outlined">add</span>
+                        Novo centro de custo
+                    </button>
+</div>
+<!-- Stats/Filter Row -->
+<div class="bg-surface-container-lowest p-md rounded-xl border border-outline-variant cream-on-cream-shadow flex flex-col md:flex-row justify-between items-center gap-md">
+<div class="flex flex-col md:flex-row items-center gap-md w-full md:w-auto">
+<div class="relative w-full md:w-80">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center text-outline">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</span>
+<input class="w-full pl-10 pr-4 py-2 bg-white border border-outline-variant rounded-lg text-body-md focus:ring-1 focus:ring-secondary focus:border-secondary transition-all" placeholder="Buscar por código ou descrição..." type="text"/>
+</div>
+<div class="flex items-center gap-sm w-full md:w-auto">
+<span class="font-label-bold text-label-bold text-on-surface-variant uppercase">Status:</span>
+<select class="bg-white border border-outline-variant rounded-lg px-4 py-2 text-body-md focus:ring-1 focus:ring-secondary focus:border-secondary transition-all min-w-[120px]">
+<option>Todos</option>
+<option>Ativo</option>
+<option>Inativo</option>
+</select>
+</div>
+</div>
+<div class="text-on-surface-variant font-label-bold text-label-bold">
+                        24 centros de custo
+                    </div>
+</div>
+<!-- Data Table Module -->
+<div class="bg-white rounded-xl border border-outline-variant cream-on-cream-shadow overflow-hidden maintenance-border">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline">
+<th class="px-lg py-3 font-label-bold text-label-bold text-on-surface uppercase tracking-wider">Código</th>
+<th class="px-lg py-3 font-label-bold text-label-bold text-on-surface uppercase tracking-wider">Descrição</th>
+<th class="px-lg py-3 font-label-bold text-label-bold text-on-surface uppercase tracking-wider">Responsável</th>
+<th class="px-lg py-3 font-label-bold text-label-bold text-on-surface uppercase tracking-wider">Status</th>
+<th class="px-lg py-3 font-label-bold text-label-bold text-on-surface uppercase tracking-wider text-right">Ações</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low transition-colors group cursor-pointer">
+<td class="px-lg py-sm font-mono-data text-mono-data text-on-surface">CC-1024</td>
+<td class="px-lg py-sm font-body-md text-body-md text-on-surface">Manutenção Preventiva - Sul</td>
+<td class="px-lg py-sm">
+<div class="flex items-center gap-sm">
+<img alt="Ricardo Martins" class="w-8 h-8 rounded-full" data-alt="A professional headshot of Ricardo Martins, a middle-aged logistics supervisor. He is wearing a grey polo shirt with a subtle company logo. The background is a blurred warehouse environment with clean, modern shelving. The lighting is warm and bright, emphasizing a professional yet approachable demeanor in a corporate fleet management setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCd2u5_agNLa1x79YkFnG3opX7C2a6tEWNnNJL9mQONtAx-dSHo91LEL2_h34-gunw6Z29FNp3n7Gk1vEU6h4JB-3Por8OOgI0KkbGRX3MbwAn_OLS-Oi83u5IYeGiKWBO6bTeSu37eOSPLGc9TasZkntcTNKxQ_KM0nqhcg0__EB1B_J7X1YUXqryozEEOMEzH-uWFs6rLukz5c-hJzh0qCmKR8GkLwo8cyPQKsoItXFFrzlXAH9Ku58H1RS3nqy6TVgmAhZkh0EQ"/>
+<span class="font-body-md text-body-md text-on-surface">Ricardo Martins</span>
+</div>
+</td>
+<td class="px-lg py-sm">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-bold bg-secondary/10 text-secondary uppercase">
+                                        Ativo
+                                    </span>
+</td>
+<td class="px-lg py-sm text-right">
+<button class="p-1.5 text-outline hover:text-secondary hover:bg-secondary/5 rounded-lg transition-all">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low transition-colors group cursor-pointer">
+<td class="px-lg py-sm font-mono-data text-mono-data text-on-surface">CC-2055</td>
+<td class="px-lg py-sm font-body-md text-body-md text-on-surface">Operações Logísticas - Matriz</td>
+<td class="px-lg py-sm">
+<div class="flex items-center gap-sm">
+<img alt="Ana Paula" class="w-8 h-8 rounded-full" data-alt="A professional headshot of Ana Paula, a financial analyst for a fleet operations company. She is smiling warmly and wearing a smart white blouse. The background is a minimalist office space with soft daylight and green plants. The image is bright and crisp, representing efficiency and modern corporate culture." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAE8r2RldZSkmDdyg_6o8UHfjJNRsQ42oaHT6_VbCBQ1rAytdPyBA8zI5Hwzjqd1btXFt5nYev9mWOfxr_AshekXVtYHDwpvm2DxHfmpHTaPFeiJMqvDCmJ913vPsWJViqCRdjUsAiXUa4bgRDQckAmHaOs1DJWwd1pJBvo1aQkendGnUBhoKB175_nIJF6c-faf3AwB7w7L4Q2Hm1LvyirKaiePtlE9M33vUvnykffWN1_Fbpw52YZMIfZow6XkLJTfiLcAiFgS6A"/>
+<span class="font-body-md text-body-md text-on-surface">Ana Paula</span>
+</div>
+</td>
+<td class="px-lg py-sm">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-bold bg-secondary/10 text-secondary uppercase">
+                                        Ativo
+                                    </span>
+</td>
+<td class="px-lg py-sm text-right">
+<button class="p-1.5 text-outline hover:text-secondary hover:bg-secondary/5 rounded-lg transition-all">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low transition-colors group cursor-pointer">
+<td class="px-lg py-sm font-mono-data text-mono-data text-on-surface">CC-3011</td>
+<td class="px-lg py-sm font-body-md text-body-md text-on-surface">Abastecimento Externo - Rodovias</td>
+<td class="px-lg py-sm">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center font-label-bold text-label-bold text-on-surface-variant">JS</div>
+<span class="font-body-md text-body-md text-on-surface">Jorge Santos</span>
+</div>
+</td>
+<td class="px-lg py-sm">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-bold bg-error/10 text-error uppercase">
+                                        Inativo
+                                    </span>
+</td>
+<td class="px-lg py-sm text-right">
+<button class="p-1.5 text-outline hover:text-secondary hover:bg-secondary/5 rounded-lg transition-all">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-low transition-colors group cursor-pointer">
+<td class="px-lg py-sm font-mono-data text-mono-data text-on-surface">CC-4099</td>
+<td class="px-lg py-sm font-body-md text-body-md text-on-surface">Administração Central</td>
+<td class="px-lg py-sm">
+<div class="flex items-center gap-sm">
+<img alt="Carlos Silva" class="w-8 h-8 rounded-full" data-alt="A portrait of Carlos Silva in a bright, modern corporate setting. He is wearing a professional charcoal sweater over a collared shirt. The background is a soft-focus office with minimalist decor. The lighting is crisp and clear, creating a sophisticated and reliable professional aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2993Vry8htaIAc9uqwH0-Gn2KEZ1Ec6-wpohCWsgZwtG-3i7VizN5MFSFBNqxPsWXrnHfP9pkfFHzEoKloXchfYT2su3HE62fun3gPeRCIxEIOTL1TmVHxvsirEhweKuR5DFjzPHJVydVUy_DJp1ZGSX4flta6c7OCelVXxkjG-GVr45pps5GqvBvDZVd_L8_EwjR6GlNJ235aEd_Ex5cBwOocSw5QgVPlUVFveRDkPoQoTnvVwUIm9R8vnYsi042NYxawcMmGN0"/>
+<span class="font-body-md text-body-md text-on-surface">Carlos Silva</span>
+</div>
+</td>
+<td class="px-lg py-sm">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-bold bg-secondary/10 text-secondary uppercase">
+                                        Ativo
+                                    </span>
+</td>
+<td class="px-lg py-sm text-right">
+<button class="p-1.5 text-outline hover:text-secondary hover:bg-secondary/5 rounded-lg transition-all">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-surface-container-low transition-colors group cursor-pointer">
+<td class="px-lg py-sm font-mono-data text-mono-data text-on-surface">CC-1050</td>
+<td class="px-lg py-sm font-body-md text-body-md text-on-surface">Treinamentos Técnicos</td>
+<td class="px-lg py-sm">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center font-label-bold text-label-bold text-on-surface-variant">MC</div>
+<span class="font-body-md text-body-md text-on-surface">Maria Costa</span>
+</div>
+</td>
+<td class="px-lg py-sm">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-bold bg-secondary/10 text-secondary uppercase">
+                                        Ativo
+                                    </span>
+</td>
+<td class="px-lg py-sm text-right">
+<button class="p-1.5 text-outline hover:text-secondary hover:bg-secondary/5 rounded-lg transition-all">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+<!-- Pagination Placeholder -->
+<div class="px-lg py-md flex items-center justify-between border-t border-outline-variant bg-surface-container-lowest">
+<span class="text-label-sm font-label-sm text-on-surface-variant">Exibindo 1-5 de 24 registros</span>
+<div class="flex items-center gap-sm">
+<button class="p-2 border border-outline-variant rounded hover:bg-surface-container-low disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button class="px-3 py-1 bg-secondary text-on-secondary rounded text-label-bold">1</button>
+<button class="px-3 py-1 hover:bg-surface-container-low rounded text-label-bold">2</button>
+<button class="px-3 py-1 hover:bg-surface-container-low rounded text-label-bold">3</button>
+<button class="p-2 border border-outline-variant rounded hover:bg-surface-container-low">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Bento Grid Style Info Section (Value Add) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-lg">
+<div class="bg-white p-lg rounded-xl border border-outline-variant cream-on-cream-shadow relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+<span class="material-symbols-outlined text-[80px]">payments</span>
+</div>
+<h3 class="font-label-bold text-label-bold text-outline uppercase mb-2">Orçamento Total CC</h3>
+<p class="font-display text-display text-primary">R$ 1.2M</p>
+<p class="font-label-sm text-label-sm text-secondary mt-2 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+                            +4.2% em relação ao mês anterior
+                        </p>
+</div>
+<div class="bg-white p-lg rounded-xl border border-outline-variant cream-on-cream-shadow relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+<span class="material-symbols-outlined text-[80px]">groups</span>
+</div>
+<h3 class="font-label-bold text-label-bold text-outline uppercase mb-2">Responsáveis Ativos</h3>
+<p class="font-display text-display text-primary">18 Gestores</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-2">
+                            Distribuídos em 12 unidades operacionais
+                        </p>
+</div>
+<div class="bg-white p-lg rounded-xl border border-outline-variant cream-on-cream-shadow relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+<span class="material-symbols-outlined text-[80px]">report_problem</span>
+</div>
+<h3 class="font-label-bold text-label-bold text-outline uppercase mb-2">Alertas de Excedente</h3>
+<p class="font-display text-display text-error">03 Centros</p>
+<p class="font-label-sm text-label-sm text-error mt-2 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">warning</span>
+                            Revisão necessária para CC-2055
+                        </p>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Micro-interaction Scripts -->
+<script>
+        document.querySelectorAll('tbody tr').forEach(row => {
+            row.addEventListener('mousedown', function() {
+                this.classList.add('scale-[0.99]', 'transition-transform');
+            });
+            row.addEventListener('mouseup', function() {
+                this.classList.remove('scale-[0.99]');
+            });
+        });
+
+        // Simple search feedback effect
+        const searchInput = document.querySelector('input[placeholder*="Buscar por código"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('scale-[1.01]');
+            searchInput.parentElement.style.transition = 'all 0.2s ease';
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('scale-[1.01]');
+        });
+    </script>
+</body></html>

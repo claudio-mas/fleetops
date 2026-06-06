@@ -17,7 +17,7 @@ describe("CrudForm (shadcn)", () => {
   it("renderiza labels, inputs e botões para o cadastro", () => {
     wrap(<CrudForm config={CADASTROS["centro-custo"]} onClose={() => {}} />);
     expect(screen.getByText("Novo Centro de Custo")).toBeInTheDocument();
-    expect(screen.getByLabelText(/Nome/)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Descrição/)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Salvar" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Cancelar" })).toBeInTheDocument();
   });

@@ -32,7 +32,7 @@ describe("CrudListPage", () => {
       },
     });
     render(wrap(<CrudListPage config={CADASTROS["centro-custo"]} />));
-    expect(screen.getByText("Centros de Custo")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Centros de Custo" })).toBeInTheDocument();
     await waitFor(() => expect(screen.getByText("Frota Pesada")).toBeInTheDocument());
   });
 });

@@ -38,7 +38,7 @@ routers: list[APIRouter] = [
     build_crud_router(
         prefix=f"{_BASE}/centro-custo",
         tag="cadastros:centro-custo",
-        crud=CRUDBase(CentroCusto, search_fields=["nome", "responsavel"]),
+        crud=CRUDBase(CentroCusto, search_fields=["nome", "codigo", "responsavel"]),
         create_schema=CentroCustoCreate,
         update_schema=CentroCustoUpdate,
         read_schema=CentroCustoRead,
