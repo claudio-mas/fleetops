@@ -1,6 +1,6 @@
 import pytest
 
-pytestmark = pytest.mark.anyio
+pytestmark = pytest.mark.asyncio
 
 SIMPLE_RESOURCES = [
     ("conta-contabil", {"nome": "Despesas Operacionais"}),

@@ -14,6 +14,7 @@ from app.models.tipo_equipamento import TipoEquipamento
 from app.models.tipo_servico import TipoServico
 from app.models.unidade_medida import UnidadeMedida
 from app.models.user import User
+from app.models.user_invitation import InvitationStatus, UserInvitation
 
 __all__ = [
     "Base",
@@ -25,6 +26,8 @@ __all__ = [
     "RoleName",
     "UserRole",
     "EmailVerificationToken",
+    "UserInvitation",
+    "InvitationStatus",
     "CentroCusto",
     "Cargo",
     "Colaborador",

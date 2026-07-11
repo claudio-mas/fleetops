@@ -1,6 +1,6 @@
 import pytest
 
-pytestmark = pytest.mark.anyio
+pytestmark = pytest.mark.asyncio
 
 
 async def _mk(client, headers, resource, payload):

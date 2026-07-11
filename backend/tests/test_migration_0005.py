@@ -1,7 +1,7 @@
 import pytest
 from sqlalchemy import inspect
 
-pytestmark = pytest.mark.anyio
+pytestmark = pytest.mark.asyncio
 
 CADASTRO_TABLES = {
     "centro_custo",
