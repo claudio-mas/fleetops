@@ -60,8 +60,16 @@ export function CrudForm({ config, initial, onClose }: Props) {
   const isEdit = initial != null;
 
   useEffect(() => {
-    setValues(initial ?? {});
-  }, [initial]);
+    if (initial) {
+      setValues(initial);
+    } else {
+      const defaults: Record<string, unknown> = {};
+      for (const f of config.fields) {
+        if (f.defaultValue !== undefined) defaults[f.name] = f.defaultValue;
+      }
+      setValues(defaults);
+    }
+  }, [initial, config.fields]);
 
   function set(name: string, v: unknown) {
     setValues((prev) => ({ ...prev, [name]: v }));
@@ -96,7 +104,10 @@ export function CrudForm({ config, initial, onClose }: Props) {
       </h3>
       {config.fields.map((f) => (
         <div key={f.name} className="space-y-1.5">
-          <Label htmlFor={f.name}>
+          <Label
+            htmlFor={f.name}
+            className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground"
+          >
             {f.label}
             {f.required && <span className="text-destructive"> *</span>}
           </Label>
@@ -112,6 +123,22 @@ export function CrudForm({ config, initial, onClose }: Props) {
               value={String(values[f.name] ?? "")}
               onChange={(v) => set(f.name, v)}
             />
+          ) : f.type === "select" ? (
+            <Select
+              value={String(values[f.name] ?? f.defaultValue ?? "")}
+              onValueChange={(v) => set(f.name, v)}
+            >
+              <SelectTrigger id={f.name}>
+                <SelectValue placeholder="— selecione —" />
+              </SelectTrigger>
+              <SelectContent>
+                {f.options?.map((o) => (
+                  <SelectItem key={o.value} value={o.value}>
+                    {o.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           ) : (
             <Input
               id={f.name}

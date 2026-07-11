@@ -24,7 +24,7 @@ function wrap(path: string) {
 describe("CadastroPage", () => {
   it("renderiza o cadastro pelo slug da rota", () => {
     wrap("/cadastros/combustivel");
-    expect(screen.getByText("Combustíveis")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Combustíveis" })).toBeInTheDocument();
   });
 
   it("mostra 'não encontrado' para slug inválido", () => {

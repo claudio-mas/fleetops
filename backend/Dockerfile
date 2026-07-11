@@ -26,6 +26,9 @@ WORKDIR /app
 RUN groupadd -r app && useradd -r -g app -s /sbin/nologin app
 
 COPY --from=builder --chown=app:app /app /app
+COPY --chown=app:app docker-entrypoint.sh /app/docker-entrypoint.sh
+# Normaliza CRLF→LF (segurança ao buildar a partir do Windows) e torna executável.
+RUN sed -i 's/\r$//' /app/docker-entrypoint.sh && chmod +x /app/docker-entrypoint.sh
 
 ENV PATH="/app/.venv/bin:$PATH" \
     PYTHONUNBUFFERED=1 \
@@ -38,4 +41,5 @@ EXPOSE 8000
 HEALTHCHECK --interval=15s --timeout=5s --retries=3 \
     CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health').read()" || exit 1
 
+ENTRYPOINT ["/app/docker-entrypoint.sh"]
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

@@ -53,6 +53,7 @@ docker-compose.override.yml
 backend/build/
 frontend/build/
 frontend/dist/
+frontend/*.tsbuildinfo
 
 # Legacy artifacts (Access source materials, kept out of git for now)
 ERD.accdb

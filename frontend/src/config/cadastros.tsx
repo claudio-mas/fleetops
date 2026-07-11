@@ -1,4 +1,9 @@
-export type FieldType = "text" | "number" | "money" | "textarea" | "ref";
+export type FieldType = "text" | "number" | "money" | "textarea" | "ref" | "select";
+
+export interface SelectOption {
+  value: string;
+  label: string;
+}
 
 export interface FieldConfig {
   name: string;
@@ -6,7 +11,14 @@ export interface FieldConfig {
   type: FieldType;
   required?: boolean;
   refResource?: string; // para type "ref": slug do recurso referenciado
+  options?: SelectOption[]; // para type "select"
+  defaultValue?: string;
   listColumn?: boolean; // exibir na tabela de listagem
+  listLabel?: string; // cabeçalho da coluna (se diferente do label do form)
+  align?: "left" | "right"; // alinhamento da coluna
+  mono?: boolean; // renderizar valor em fonte tabular (ex.: código)
+  avatar?: boolean; // renderizar com avatar de iniciais (ex.: responsável)
+  badge?: boolean; // renderizar como badge de status
 }
 
 export interface CadastroConfig {
@@ -32,7 +44,30 @@ export const CADASTROS: Record<string, CadastroConfig> = {
     resource: "centro-custo",
     label: "Centros de Custo",
     singular: "Centro de Custo",
-    fields: [NOME, text("responsavel", "Responsável", false, true), OBS],
+    fields: [
+      { name: "codigo", label: "Código", type: "text", listColumn: true, mono: true },
+      { name: "nome", label: "Descrição", type: "text", required: true, listColumn: true },
+      {
+        name: "responsavel",
+        label: "Responsável",
+        type: "text",
+        listColumn: true,
+        avatar: true,
+      },
+      {
+        name: "status",
+        label: "Status",
+        type: "select",
+        defaultValue: "ativo",
+        options: [
+          { value: "ativo", label: "Ativo" },
+          { value: "inativo", label: "Inativo" },
+        ],
+        listColumn: true,
+        badge: true,
+      },
+      OBS,
+    ],
   },
   "conta-contabil": {
     resource: "conta-contabil",
