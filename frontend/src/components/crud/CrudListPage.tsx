@@ -4,7 +4,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Layers,
-  MoreVertical,
   Pencil,
   Plus,
   Search,
@@ -16,11 +15,19 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { AvatarInitials } from "@/components/ui/avatar-initials";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   Select,
   SelectContent,
@@ -83,6 +90,7 @@ export function CrudListPage({ config }: { config: CadastroConfig }) {
   const [statusFilter, setStatusFilter] = useState<string>(ALL);
   const [page, setPage] = useState(0);
   const [editing, setEditing] = useState<Row | null | undefined>(undefined);
+  const [deleting, setDeleting] = useState<Row | null>(null);
 
   const resource = useCrudResource<Row>(config.resource);
   const statusField = config.fields.find((f) => f.badge);
@@ -123,204 +131,243 @@ export function CrudListPage({ config }: { config: CadastroConfig }) {
       <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
           <nav className="mb-1 flex items-center gap-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-            <span>Configurações</span>
+            <span>Cadastros</span>
             <ChevronRight className="size-3.5" />
             <span className="text-primary">{config.label}</span>
           </nav>
           <h1 className="text-3xl font-bold tracking-tight text-foreground">{config.label}</h1>
         </div>
-        <Button onClick={() => setEditing(null)} className="gap-2 self-start md:self-auto">
-          <Plus className="size-4" />
-          Novo {config.singular.toLowerCase()}
-        </Button>
+        {editing === undefined && (
+          <Button onClick={() => setEditing(null)} className="gap-2 self-start md:self-auto">
+            <Plus className="size-4" />
+            Novo {config.singular.toLowerCase()}
+          </Button>
+        )}
       </div>
 
-      {/* Formulário inline */}
+      {/* Formulário inline (substitui a listagem enquanto aberto) */}
       {editing !== undefined && (
         <div className="rounded-xl border bg-card p-6 shadow-sm">
           <CrudForm config={config} initial={editing} onClose={() => setEditing(undefined)} />
         </div>
       )}
 
-      {/* Barra de filtros */}
-      <div className="flex flex-col gap-4 rounded-xl border bg-card p-4 shadow-sm md:flex-row md:items-center md:justify-between">
-        <div className="flex flex-col gap-3 md:flex-row md:items-center">
-          <div className="relative w-full md:w-80">
-            <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="Buscar por código ou descrição..."
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(0);
-              }}
-              className="pl-9"
-            />
-          </div>
-          {statusField && (
-            <div className="flex items-center gap-2">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                Status
-              </span>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-[140px]">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value={ALL}>Todos</SelectItem>
-                  {statusField.options?.map((o) => (
-                    <SelectItem key={o.value} value={o.value}>
-                      {o.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+      {/* Listagem: filtro + tabela + paginação + cards-resumo (oculta enquanto o form está aberto) */}
+      {editing === undefined && (
+        <>
+          {/* Barra de filtros */}
+          <div className="flex flex-col gap-4 rounded-xl border bg-card p-4 shadow-sm md:flex-row md:items-center md:justify-between">
+            <div className="flex flex-col gap-3 md:flex-row md:items-center">
+              <div className="relative w-full md:w-80">
+                <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  placeholder="Buscar por código ou descrição..."
+                  value={search}
+                  onChange={(e) => {
+                    setSearch(e.target.value);
+                    setPage(0);
+                  }}
+                  className="pl-9"
+                />
+              </div>
+              {statusField && (
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    Status
+                  </span>
+                  <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <SelectTrigger className="w-[140px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value={ALL}>Todos</SelectItem>
+                      {statusField.options?.map((o) => (
+                        <SelectItem key={o.value} value={o.value}>
+                          {o.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
             </div>
-          )}
-        </div>
-        <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-          {total} {total === 1 ? config.singular.toLowerCase() : config.label.toLowerCase()}
-        </span>
-      </div>
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+              {total} {total === 1 ? config.singular.toLowerCase() : config.label.toLowerCase()}
+            </span>
+          </div>
 
-      {/* Tabela */}
-      <div className="overflow-hidden rounded-xl border border-t-4 border-t-primary bg-card shadow-sm">
-        <Table>
-          <TableHeader>
-            <TableRow className="border-b bg-muted/60 hover:bg-muted/60">
-              {columns.map((c) => (
-                <TableHead
-                  key={c.name}
-                  className={`px-6 py-3 text-[11px] font-semibold uppercase tracking-wider text-foreground ${
-                    c.align === "right" ? "text-right" : ""
-                  }`}
-                >
-                  {c.listLabel ?? c.label}
-                </TableHead>
-              ))}
-              <TableHead className="w-0 px-6 py-3 text-right text-[11px] font-semibold uppercase tracking-wider text-foreground">
-                Ações
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading ? (
-              <TableRow>
-                <TableCell colSpan={columns.length + 1} className="px-6 py-8 text-center text-muted-foreground">
-                  Carregando...
-                </TableCell>
-              </TableRow>
-            ) : items.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={columns.length + 1} className="px-6 py-8 text-center text-muted-foreground">
-                  Nenhum registro.
-                </TableCell>
-              </TableRow>
-            ) : (
-              items.map((row) => (
-                <TableRow key={row.id} className="hover:bg-primary/[0.04]">
+          {/* Tabela */}
+          <div className="overflow-hidden rounded-xl border border-t-4 border-t-primary bg-card shadow-sm">
+            <TooltipProvider delayDuration={300}>
+            <Table>
+              <TableHeader>
+                <TableRow className="border-b bg-muted/60 hover:bg-muted/60">
                   {columns.map((c) => (
-                    <TableCell
+                    <TableHead
                       key={c.name}
-                      className={`px-6 py-3 text-sm text-foreground ${
+                      className={`px-6 py-3 text-[11px] font-semibold uppercase tracking-wider text-foreground ${
                         c.align === "right" ? "text-right" : ""
                       }`}
                     >
-                      {renderCell(c, row)}
-                    </TableCell>
+                      {c.listLabel ?? c.label}
+                    </TableHead>
                   ))}
-                  <TableCell className="px-6 py-3 text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="size-8 text-muted-foreground"
-                          aria-label="Ações"
-                        >
-                          <MoreVertical className="size-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => setEditing(row)}>
-                          <Pencil className="size-4" />
-                          Editar
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          className="text-destructive focus:text-destructive"
-                          onClick={() => {
-                            if (confirm("Excluir este registro?")) remove.mutate(row.id);
-                          }}
-                        >
-                          <Trash2 className="size-4" />
-                          Excluir
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
+                  <TableHead className="w-0 px-6 py-3 text-center text-[11px] font-semibold uppercase tracking-wider text-foreground">
+                    Ações
+                  </TableHead>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+              </TableHeader>
+              <TableBody>
+                {isLoading ? (
+                  <TableRow>
+                    <TableCell colSpan={columns.length + 1} className="px-6 py-8 text-center text-muted-foreground">
+                      Carregando...
+                    </TableCell>
+                  </TableRow>
+                ) : items.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={columns.length + 1} className="px-6 py-8 text-center text-muted-foreground">
+                      Nenhum registro.
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  items.map((row) => (
+                    <TableRow key={row.id} className="hover:bg-primary/[0.04]">
+                      {columns.map((c) => (
+                        <TableCell
+                          key={c.name}
+                          className={`px-6 py-3 text-sm text-foreground ${
+                            c.align === "right" ? "text-right" : ""
+                          }`}
+                        >
+                          {renderCell(c, row)}
+                        </TableCell>
+                      ))}
+                      <TableCell className="px-6 py-3 text-right">
+                        <div className="flex items-center justify-end gap-1">
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="size-8 text-muted-foreground hover:text-foreground"
+                                aria-label="Editar"
+                                onClick={() => setEditing(row)}
+                              >
+                                <Pencil className="size-4" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Editar</TooltipContent>
+                          </Tooltip>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="size-8 text-muted-foreground hover:text-destructive"
+                                aria-label="Excluir"
+                                onClick={() => setDeleting(row)}
+                              >
+                                <Trash2 className="size-4" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Excluir</TooltipContent>
+                          </Tooltip>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+            </TooltipProvider>
 
-        {/* Paginação */}
-        <div className="flex items-center justify-between border-t bg-card px-6 py-4">
-          <span className="text-xs text-muted-foreground">
-            Exibindo {from}-{to} de {total} registros
-          </span>
-          <div className="flex items-center gap-1">
-            <Button
-              variant="outline"
-              size="icon"
-              className="size-8"
-              disabled={page === 0}
-              onClick={() => setPage((p) => Math.max(0, p - 1))}
-              aria-label="Página anterior"
-            >
-              <ChevronLeft className="size-4" />
-            </Button>
-            <span className="px-2 text-sm font-semibold tabular-nums">
-              {page + 1} / {pageCount}
-            </span>
-            <Button
-              variant="outline"
-              size="icon"
-              className="size-8"
-              disabled={page + 1 >= pageCount}
-              onClick={() => setPage((p) => p + 1)}
-              aria-label="Próxima página"
-            >
-              <ChevronRight className="size-4" />
-            </Button>
+            {/* Paginação */}
+            <div className="flex items-center justify-between border-t bg-card px-6 py-4">
+              <span className="text-xs text-muted-foreground">
+                Exibindo {from}-{to} de {total} registros
+              </span>
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="size-8"
+                  disabled={page === 0}
+                  onClick={() => setPage((p) => Math.max(0, p - 1))}
+                  aria-label="Página anterior"
+                >
+                  <ChevronLeft className="size-4" />
+                </Button>
+                <span className="px-2 text-sm font-semibold tabular-nums">
+                  {page + 1} / {pageCount}
+                </span>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="size-8"
+                  disabled={page + 1 >= pageCount}
+                  onClick={() => setPage((p) => p + 1)}
+                  aria-label="Próxima página"
+                >
+                  <ChevronRight className="size-4" />
+                </Button>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
 
-      {/* Cards-resumo (somente cadastros com status) */}
-      {statusField && (
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-          <StatCard
-            icon={<Layers className="size-20" />}
-            label={`Total de ${config.label.toLowerCase()}`}
-            value={String(stats.total)}
-            hint="Registros cadastrados no tenant"
-          />
-          <StatCard
-            icon={<Users className="size-20" />}
-            label="Responsáveis distintos"
-            value={String(stats.responsaveis)}
-            hint="Gestores associados aos centros"
-          />
-          <StatCard
-            icon={<AlertTriangle className="size-20" />}
-            label="Centros inativos"
-            value={String(stats.inativos)}
-            hint={stats.inativos > 0 ? "Revise os centros desativados" : "Todos ativos"}
-            tone={stats.inativos > 0 ? "error" : "default"}
-          />
-        </div>
+          {/* Cards-resumo (somente cadastros com status) */}
+          {statusField && (
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+              <StatCard
+                icon={<Layers className="size-20" />}
+                label={`Total de ${config.label.toLowerCase()}`}
+                value={String(stats.total)}
+                hint="Registros cadastrados no tenant"
+              />
+              <StatCard
+                icon={<Users className="size-20" />}
+                label="Responsáveis distintos"
+                value={String(stats.responsaveis)}
+                hint="Gestores associados aos centros"
+              />
+              <StatCard
+                icon={<AlertTriangle className="size-20" />}
+                label="Centros inativos"
+                value={String(stats.inativos)}
+                hint={stats.inativos > 0 ? "Revise os centros desativados" : "Todos ativos"}
+                tone={stats.inativos > 0 ? "error" : "default"}
+              />
+            </div>
+          )}
+        </>
       )}
+
+      {/* Confirmação de exclusão */}
+      <Dialog open={deleting !== null} onOpenChange={(open) => !open && setDeleting(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Excluir {config.singular.toLowerCase()}?</DialogTitle>
+            <DialogDescription>
+              Esta ação não pode ser desfeita. O registro será removido permanentemente.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleting(null)} disabled={remove.isPending}>
+              Cancelar
+            </Button>
+            <Button
+              variant="destructive"
+              disabled={remove.isPending}
+              onClick={() => {
+                if (!deleting) return;
+                remove.mutate(deleting.id, { onSuccess: () => setDeleting(null) });
+              }}
+            >
+              Excluir
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
